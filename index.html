@@ -155,7 +155,7 @@ const COLORS = { prewire: "#6687e1", rough: "#1D9E75", final: "#c47a3a" };
 const DEFAULT_STATE = {
   annualGoal: 3000000,
   currentMonth: new Date().getMonth() + 1,
-  includeYTD: true,
+  includeYTD: false,
   ytdWritten: 0,
   ytdRecognized: 0,
   carryoverTotal: 0,
@@ -406,9 +406,26 @@ function App() {
   const [nextId,          setNextId]          = useState(3);
   const [activeTab,       setActiveTab]       = useState("setup");
 
+  // Remembers the month that was set before YTD was checked, so we can restore it on uncheck
+  const preYTDMonth = useRef(DEFAULT_STATE.currentMonth);
+  const todayMonth  = new Date().getMonth() + 1;
+
+  function handleYTDToggle(checked) {
+    if (checked) {
+      // Save current month selection, then snap to today's month
+      preYTDMonth.current = currentMonth;
+      setCurrentMonth(todayMonth);
+    } else {
+      // Restore the month that was set before YTD was checked
+      setCurrentMonth(preYTDMonth.current);
+    }
+    setIncludeYTD(checked);
+  }
+
   function handleReset() {
     setAnnualGoal(DEFAULT_STATE.annualGoal);
     setCurrentMonth(DEFAULT_STATE.currentMonth);
+    preYTDMonth.current = DEFAULT_STATE.currentMonth;
     setIncludeYTD(DEFAULT_STATE.includeYTD);
     setYtdWritten(DEFAULT_STATE.ytdWritten);
     setYtdRecognized(DEFAULT_STATE.ytdRecognized);
@@ -625,7 +642,7 @@ function App() {
 
       h(Section, { title: "Year-to-date actuals" },
         h("div", { className: "ytd-toggle-row" },
-          h("input", { type: "checkbox", id: "ytd-chk", checked: includeYTD, onChange: e => setIncludeYTD(e.target.checked) }),
+          h("input", { type: "checkbox", id: "ytd-chk", checked: includeYTD, onChange: e => handleYTDToggle(e.target.checked) }),
           h("label", { htmlFor: "ytd-chk", style: { fontSize: 14, cursor: "pointer", color: "var(--text-muted)" } }, "Include YTD actuals in calculation")
         ),
         includeYTD ? h("div", { className: "grid-2" },
