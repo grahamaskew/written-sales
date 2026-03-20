@@ -9,18 +9,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --accent:       #798aa9;
-    --accent-light: #e8ecf2;
-    --accent-mid:   #b0bcce;
-    --accent-dark:  #4f6080;
+    --accent:       #6687e1;
+    --accent-light: #eaeefc;
+    --accent-mid:   #a8b8ee;
+    --accent-dark:  #3a5abf;
     --text-primary: #1c2333;
     --text-muted:   #6b7a90;
     --text-faint:   #9aaabb;
-    --bg-page:      #f2f4f7;
+    --bg-page:      #f2f4f8;
     --bg-card:      #ffffff;
-    --bg-subtle:    #eef0f4;
-    --border:       #dde1e8;
-    --border-light: #eaedf2;
+    --bg-subtle:    #eef0f6;
+    --border:       #dde1ee;
+    --border-light: #eaedf5;
     --error:        #c94a2e;
     --error-light:  #fdf0ee;
     --error-border: #f0c4bc;
@@ -31,6 +31,8 @@
 
   /* header */
   .app-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.75rem; gap: 12px; }
+  .app-header-left { display: flex; align-items: center; gap: 12px; }
+  .app-logo { width: 40px; height: 40px; object-fit: contain; flex-shrink: 0; }
   .app-title { font-size: 21px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.2px; }
   .app-sub { font-size: 13px; color: var(--text-muted); }
 
@@ -54,14 +56,14 @@
 
   /* inputs */
   .input-wrap { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; background: var(--bg-card); transition: border-color .15s; }
-  .input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(121,138,169,.12); }
+  .input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(102,135,225,.13); }
   .input-prefix { padding: 0 9px; font-size: 13px; color: var(--accent); background: var(--accent-light); border-right: 1px solid var(--border-light); white-space: nowrap; height: 100%; display: flex; align-items: center; flex-shrink: 0; font-weight: 500; }
   .input-wrap input { border: none; background: transparent; padding: 7px 10px; width: 100%; font-size: 14px; color: var(--text-primary); outline: none; font-family: inherit; }
   .input-wrap input[type=number]::-webkit-inner-spin-button,
   .input-wrap input[type=number]::-webkit-outer-spin-button { opacity: .4; }
 
   select.styled { width: 100%; padding: 7px 10px; font-size: 14px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg-card); color: var(--text-primary); font-family: inherit; outline: none; cursor: pointer; transition: border-color .15s; }
-  select.styled:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(121,138,169,.12); }
+  select.styled:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(102,135,225,.13); }
   input[type=text].styled { border: none; border-bottom: 1.5px solid var(--border); background: transparent; font-size: 15px; font-weight: 600; color: var(--text-primary); padding: 3px 0; outline: none; width: 100%; font-family: inherit; transition: border-color .15s; }
   input[type=text].styled:focus { border-bottom-color: var(--accent); }
   input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--accent); }
@@ -132,6 +134,7 @@
     .grid-3 { grid-template-columns: 1fr; }
     .metric-card { min-width: 120px; }
     .app-header { flex-direction: column; }
+    .app-header-left { flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -143,8 +146,9 @@
 <script>
 const { useState, useMemo, useRef, createElement: h, Fragment } = React;
 
-const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const COLORS = { prewire: "#798aa9", rough: "#1D9E75", final: "#c47a3a" };
+const LOGO_B64 = "data:image/webp;base64,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";
+
+const COLORS = { prewire: "#6687e1", rough: "#1D9E75", final: "#c47a3a" };
 
 const DEFAULT_STATE = {
   annualGoal: 3000000,
@@ -174,6 +178,7 @@ function DollarInput({ value, onChange }) {
   const [focused, setFocused] = useState(false);
   const [raw, setRaw] = useState(value === 0 ? "" : String(Math.round(value)));
   const prevValue = useRef(value);
+  const inputRef = useRef(null);
 
   if (!focused && value !== prevValue.current) {
     prevValue.current = value;
@@ -185,13 +190,20 @@ function DollarInput({ value, onChange }) {
   return h("div", { className: "input-wrap" },
     h("span", { className: "input-prefix" }, "$"),
     h("input", {
+      ref: inputRef,
       type: "text",
       inputMode: "numeric",
       value: displayVal,
       placeholder: "0",
       onFocus: () => {
         setFocused(true);
-        setRaw(value === 0 ? "" : String(Math.round(value)));
+        // Zero fields: clear immediately. Non-zero fields: select-all so typing replaces.
+        if (value === 0) {
+          setRaw("");
+        } else {
+          setRaw(String(Math.round(value)));
+          setTimeout(() => inputRef.current && inputRef.current.select(), 0);
+        }
       },
       onChange: e => {
         const cleaned = e.target.value.replace(/[^0-9]/g, "");
@@ -213,12 +225,14 @@ function DollarInput({ value, onChange }) {
 
 function NumInput({ value, onChange, prefix, min, max, step, clearOnZero, allowDecimal }) {
   const [focused, setFocused] = useState(false);
+  const inputRef = useRef(null);
   const effectiveStep = allowDecimal ? 0.1 : (step || 1);
   const displayVal = (focused || !(value === 0 && clearOnZero)) ? value : "";
 
   return h("div", { className: "input-wrap" },
     prefix ? h("span", { className: "input-prefix" }, prefix) : null,
     h("input", {
+      ref: inputRef,
       type: "number",
       value: displayVal,
       min, max,
@@ -226,7 +240,12 @@ function NumInput({ value, onChange, prefix, min, max, step, clearOnZero, allowD
       placeholder: clearOnZero ? "0" : undefined,
       onFocus: e => {
         setFocused(true);
-        if (clearOnZero && value === 0) e.target.value = "";
+        if (clearOnZero && value === 0) {
+          e.target.value = "";
+        } else {
+          // Select-all so the user can immediately type a new value
+          setTimeout(() => inputRef.current && inputRef.current.select(), 0);
+        }
       },
       onChange: e => {
         const raw = e.target.value;
@@ -268,13 +287,30 @@ function DeductionRow({ label, value, color, bold }) {
   );
 }
 
-function MonthlyChart({ data, currentMonth, monthlyTarget }) {
+function MonthlyChart({ data, currentMonth }) {
   const [hovered, setHovered] = useState(null);
   const maxRev = Math.max(...data.map(d => d.revenue), 1);
   const chartH = 200;
   const totalW = data.length * 10;
   const barW = 8.5;
-  const goalY = chartH - (monthlyTarget / maxRev) * chartH;
+
+  // Split bars into non-hovered and hovered so the hovered tooltip renders last (on top)
+  const bars = data.map((d, i) => {
+    const barH = Math.max(1, (d.revenue / maxRev) * chartH);
+    const x = i * 10;
+    const y = chartH - barH;
+    const isPast = d.month < currentMonth;
+    const isCurrentYear = d.month <= 12;
+    const fill = isPast ? "#c4ccd8" : isCurrentYear ? "#6687e1" : "#a8b8ee";
+    const label = d.month <= 12
+      ? MONTH_NAMES[(d.month - 1) % 12]
+      : "Y" + Math.ceil(d.month / 12) + " M" + (((d.month - 1) % 12) + 1);
+    return { d, i, barH, x, y, fill, label };
+  });
+
+  // Clamp tooltip so it never overflows left or right edge
+  function tooltipX(x) { return Math.max(0, Math.min(x, totalW - 68)); }
+  function tooltipY(y) { return Math.max(4, y - 24); }
 
   return h("div", null,
     h("div", { className: "chart-wrap" },
@@ -282,34 +318,29 @@ function MonthlyChart({ data, currentMonth, monthlyTarget }) {
         viewBox: "0 0 " + Math.max(totalW, 100) + " " + (chartH + 30),
         style: { width: "100%", minWidth: 600, display: "block" }
       },
-        goalY > 0 && goalY < chartH ? h("line", { x1: 0, y1: goalY, x2: totalW, y2: goalY, stroke: "#c47a3a", strokeWidth: 0.6, strokeDasharray: "3,2" }) : null,
-        goalY > 0 && goalY < chartH ? h("text", { x: 2, y: goalY - 2, fontSize: 4, fill: "#c47a3a" }, "Monthly target") : null,
-        ...data.map((d, i) => {
-          const barH = Math.max(1, (d.revenue / maxRev) * chartH);
-          const x = i * 10;
-          const y = chartH - barH;
-          const isPast = d.month < currentMonth;
-          const isCurrentYear = d.month <= 12;
-          const fill = isPast ? "#c4ccd8" : isCurrentYear ? "#798aa9" : "#b0bcce";
-          const label = d.month <= 12
-            ? MONTH_NAMES[(d.month - 1) % 12]
-            : "Y" + Math.ceil(d.month / 12) + " M" + (((d.month - 1) % 12) + 1);
-          return h("g", { key: i, onMouseEnter: () => setHovered(i), onMouseLeave: () => setHovered(null) },
+        // Render all bars + axis labels first
+        ...bars.map(({ d, i, barH, x, y, fill, label }) =>
+          h("g", { key: "bar-" + i, onMouseEnter: () => setHovered(i), onMouseLeave: () => setHovered(null) },
             h("rect", { x: x + 0.5, y, width: barW, height: barH, fill, rx: 1 }),
-            i % 3 === 0 ? h("text", { x: x + barW / 2, y: chartH + 12, textAnchor: "middle", fontSize: 4, fill: "#9aaabb" }, label) : null,
-            hovered === i ? h("g", null,
-              h("rect", { x: Math.min(x, totalW - 70), y: Math.max(0, y - 22), width: 65, height: 16, fill: "#fff", stroke: "#dde1e8", strokeWidth: 0.5, rx: 3 }),
-              h("text", { x: Math.min(x, totalW - 70) + 32, y: Math.max(0, y - 22) + 10, textAnchor: "middle", fontSize: 4.5, fill: "#1c2333", fontWeight: 600 }, fmtResult(d.revenue))
-            ) : null
+            i % 3 === 0 ? h("text", { x: x + barW / 2, y: chartH + 12, textAnchor: "middle", fontSize: 4, fill: "#9aaabb" }, label) : null
+          )
+        ),
+        // Render hovered tooltip last so it paints on top of all bars
+        hovered !== null ? (() => {
+          const { x, y, d } = bars[hovered];
+          const tx = tooltipX(x - 26);
+          const ty = tooltipY(y);
+          return h("g", { key: "tooltip", style: { pointerEvents: "none" } },
+            h("rect", { x: tx, y: ty, width: 68, height: 17, fill: "#fff", stroke: "#c8cfde", strokeWidth: 0.6, rx: 3 }),
+            h("text", { x: tx + 34, y: ty + 11, textAnchor: "middle", fontSize: 4.8, fill: "#1c2333", fontWeight: 600 }, fmtResult(d.revenue))
           );
-        })
+        })() : null
       )
     ),
     h("div", { className: "chart-legend" },
       h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#c4ccd8" } }), "Past months"),
-      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#798aa9" } }), "Current year"),
-      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#b0bcce" } }), "Future years"),
-      h("span", { className: "legend-item" }, h("span", { className: "legend-line", style: { background: "#c47a3a" } }), "Monthly target")
+      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#6687e1" } }), "Current year"),
+      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#a8b8ee" } }), "Future years")
     )
   );
 }
@@ -519,9 +550,12 @@ function App() {
   return h("div", { className: "app" },
 
     h("div", { className: "app-header" },
-      h("div", null,
-        h("div", { className: "app-title" }, "Revenue Recognition Calculator"),
-        h("div", { className: "app-sub" }, "Custom integration services — written sales planning tool")
+      h("div", { className: "app-header-left" },
+        h("img", { src: LOGO_B64, className: "app-logo", alt: "GA logo" }),
+        h("div", null,
+          h("div", { className: "app-title" }, "Revenue Recognition Calculator"),
+          h("div", { className: "app-sub" }, "Custom integration services — written sales planning tool")
+        )
       ),
       activeTab === "setup"
         ? h("button", { className: "btn btn-reset", onClick: handleReset }, "↺ Reset all")
@@ -706,7 +740,7 @@ function App() {
 
       h(Section, { title: "Monthly revenue projection — 36-month horizon" },
         h("p", { className: "helper-text" }, "Revenue from new written sales only, assuming consistent monthly volume. Hover bars for detail."),
-        h(MonthlyChart, { data: calc.revenueByMonthArr, currentMonth, monthlyTarget: calc.monthlyRevNeeded })
+        h(MonthlyChart, { data: calc.revenueByMonthArr, currentMonth })
       ),
 
       h(Section, { title: "Revenue recognition by phase type" },
