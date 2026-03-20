@@ -28,104 +28,69 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; background: var(--bg-page); color: var(--text-primary); min-height: 100vh; -webkit-font-smoothing: antialiased; }
   .app { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
-
-  /* header */
   .app-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.75rem; gap: 12px; }
   .app-header-left { display: flex; align-items: center; gap: 12px; }
   .app-logo { width: 40px; height: 40px; object-fit: contain; flex-shrink: 0; }
   .app-title { font-size: 21px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.2px; }
   .app-sub { font-size: 13px; color: var(--text-muted); }
-
-  /* tabs */
   .tabs { display: flex; gap: 2px; border-bottom: 1.5px solid var(--border); margin-bottom: 1.25rem; }
-  .tab-btn { background: none; border: none; padding: 8px 20px; font-size: 13.5px; font-weight: 400; cursor: pointer; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1.5px; font-family: inherit; transition: color .15s; letter-spacing: 0.01em; }
+  .tab-btn { background: none; border: none; padding: 8px 20px; font-size: 13.5px; font-weight: 400; cursor: pointer; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1.5px; font-family: inherit; transition: color .15s; }
   .tab-btn.active { color: var(--accent-dark); font-weight: 600; border-bottom-color: var(--accent); }
   .tab-btn:hover { color: var(--text-primary); }
-
-  /* section card */
   .section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
   .section-title { font-size: 10.5px; font-weight: 600; color: var(--accent); letter-spacing: .09em; text-transform: uppercase; margin-bottom: 1rem; }
-
-  /* grids */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
-
-  /* label */
   .lbl { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: 400; }
   .lbl-hint { font-size: 11px; color: var(--text-faint); margin-top: 1px; }
-
-  /* inputs */
   .input-wrap { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; background: var(--bg-card); transition: border-color .15s; }
   .input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(102,135,225,.13); }
   .input-prefix { padding: 0 9px; font-size: 13px; color: var(--accent); background: var(--accent-light); border-right: 1px solid var(--border-light); white-space: nowrap; height: 100%; display: flex; align-items: center; flex-shrink: 0; font-weight: 500; }
   .input-wrap input { border: none; background: transparent; padding: 7px 10px; width: 100%; font-size: 14px; color: var(--text-primary); outline: none; font-family: inherit; }
   .input-wrap input[type=number]::-webkit-inner-spin-button,
   .input-wrap input[type=number]::-webkit-outer-spin-button { opacity: .4; }
-
-  select.styled { width: 100%; padding: 7px 10px; font-size: 14px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg-card); color: var(--text-primary); font-family: inherit; outline: none; cursor: pointer; transition: border-color .15s; }
+  select.styled { width: 100%; padding: 7px 10px; font-size: 14px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg-card); color: var(--text-primary); font-family: inherit; outline: none; cursor: pointer; }
   select.styled:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(102,135,225,.13); }
-  input[type=text].styled { border: none; border-bottom: 1.5px solid var(--border); background: transparent; font-size: 15px; font-weight: 600; color: var(--text-primary); padding: 3px 0; outline: none; width: 100%; font-family: inherit; transition: border-color .15s; }
+  input[type=text].styled { border: none; border-bottom: 1.5px solid var(--border); background: transparent; font-size: 15px; font-weight: 600; color: var(--text-primary); padding: 3px 0; outline: none; width: 100%; font-family: inherit; }
   input[type=text].styled:focus { border-bottom-color: var(--accent); }
   input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--accent); }
-
-  /* metric cards */
   .metric-cards { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
   .metric-card { background: var(--accent-light); border: 1px solid var(--border); border-radius: 9px; padding: 1rem; flex: 1; min-width: 140px; }
   .metric-card.primary { background: var(--accent); border-color: var(--accent); }
   .metric-card.primary .mc-label { color: rgba(255,255,255,.75); }
-  .metric-card.primary .mc-value { color: #ffffff; }
+  .metric-card.primary .mc-value { color: #fff; }
   .metric-card.primary .mc-sub { color: rgba(255,255,255,.65); }
-  .metric-card .mc-label { font-size: 11.5px; color: var(--text-muted); margin-bottom: 5px; font-weight: 400; }
+  .metric-card .mc-label { font-size: 11.5px; color: var(--text-muted); margin-bottom: 5px; }
   .metric-card .mc-value { font-size: 21px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.3px; }
   .metric-card .mc-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; }
-
-  /* deduction table */
   .deduction-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border-light); font-size: 13px; }
   .deduction-row.total-row { border-bottom: none; padding-top: 12px; font-size: 14px; }
-
-  /* info box */
   .info-box { background: var(--accent-light); border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px; font-size: 13px; margin-top: 10px; color: var(--text-muted); }
   .info-box strong { color: var(--accent-dark); }
-
-  /* sub-panel */
   .sub-panel { background: var(--bg-subtle); border-radius: 8px; padding: 12px; margin-top: 6px; border: 1px solid var(--border-light); }
   .sub-panel-title { font-size: 11.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; }
-
-  /* phase dot */
   .phase-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; margin-right: 5px; flex-shrink: 0; }
-
-  /* buttons */
   .btn { border: 1px solid var(--border); background: transparent; border-radius: 7px; padding: 7px 15px; font-size: 13.5px; cursor: pointer; color: var(--text-primary); font-family: inherit; transition: background .12s, border-color .12s; font-weight: 400; }
   .btn:hover { background: var(--bg-subtle); border-color: var(--accent-mid); }
   .btn-remove { font-size: 12px; color: var(--text-muted); padding: 4px 10px; }
   .btn-reset { font-size: 13px; color: var(--error); border-color: var(--error-border); padding: 6px 14px; white-space: nowrap; flex-shrink: 0; font-weight: 500; }
-  .btn-reset:hover { background: var(--error-light); border-color: #e0a098; }
-  .btn-pdf { font-size: 13px; color: #fff; background: var(--accent); border-color: var(--accent); padding: 6px 16px; white-space: nowrap; flex-shrink: 0; font-weight: 500; }
+  .btn-reset:hover { background: var(--error-light); }
+  .btn-pdf { font-size: 13px; color: #fff; background: var(--accent); border-color: var(--accent); padding: 6px 16px; white-space: nowrap; flex-shrink: 0; font-weight: 500; border-radius: 7px; border: 1px solid var(--accent); cursor: pointer; font-family: inherit; }
   .btn-pdf:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
-
-  /* Hidden print pages — only visible during print */
-  .print-page { display: none; }
-
   .mix-status { font-size: 13px; margin-left: auto; }
   .mix-ok { color: var(--text-muted); }
   .mix-err { color: var(--error); }
   .pct-err { font-size: 12px; color: var(--error); margin-top: 8px; }
-
-  /* chart */
   .chart-wrap { overflow-x: auto; }
   .chart-legend { display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); margin-top: 8px; flex-wrap: wrap; }
   .legend-item { display: flex; align-items: center; gap: 5px; }
   .legend-swatch { width: 10px; height: 10px; border-radius: 2px; }
-  .legend-line { width: 16px; height: 1px; }
-
-  /* table */
   .phase-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
   .phase-table th { padding: 6px 8px; font-weight: 600; font-size: 11.5px; border-bottom: 1.5px solid var(--border); color: var(--text-muted); }
-  .phase-table td { padding: 8px 8px; border-bottom: 1px solid var(--border-light); }
+  .phase-table td { padding: 8px; border-bottom: 1px solid var(--border-light); }
   .phase-table tr.total-row td { border-top: 1.5px solid var(--border); border-bottom: none; background: var(--accent-light); font-weight: 600; color: var(--accent-dark); }
   .text-right { text-align: right; }
   .text-muted { color: var(--text-muted); }
-
   .notice { padding: 2rem; text-align: center; color: var(--text-muted); font-size: 14px; }
   .helper-text { font-size: 13px; color: var(--text-muted); margin-bottom: .75rem; line-height: 1.5; }
   .mt-8 { margin-top: 8px; }
@@ -133,7 +98,7 @@
   .name-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; }
   .add-remove-row { display: flex; align-items: center; margin-bottom: 1rem; }
   .ytd-toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
-
+  .print-only { display: none; }
   @media (max-width: 600px) {
     .grid-2 { grid-template-columns: 1fr; }
     .grid-3 { grid-template-columns: 1fr; }
@@ -141,70 +106,37 @@
     .app-header { flex-direction: column; }
     .app-header-left { flex-wrap: wrap; }
   }
-
-  /* ── Print / PDF styles ── */
   @media print {
-    @page { margin: 18mm 14mm; size: A4 portrait; }
-
+    @page { margin: 16mm 12mm; size: A4 portrait; }
     body { background: #fff !important; font-size: 12px; }
     .app { max-width: 100%; padding: 0; }
-
-    /* Hide interactive chrome */
-    .tabs, .btn-reset, .btn-pdf, .btn, .add-remove-row,
-    .ytd-toggle-row input[type=checkbox],
-    .btn-remove { display: none !important; }
-
-    /* Show all print-pages regardless of active tab */
-    .print-page { display: block !important; }
-
-    /* Page breaks between sections */
-    .print-page-break { page-break-before: always; break-before: page; }
-
-    /* Sections */
-    .section { border: 1px solid #ccc; border-radius: 0; box-shadow: none; margin-bottom: 10px; padding: 10px; }
+    .tabs, .btn-reset, .btn-pdf, .add-remove-row, .btn-remove, .ytd-toggle-row input[type=checkbox] { display: none !important; }
+    .print-only { display: block !important; }
+    .screen-only { display: none !important; }
+    .print-page-break { page-break-before: always; break-before: page; margin-top: 0; }
+    .section { border: 1px solid #ccc; border-radius: 0; margin-bottom: 8px; padding: 10px; }
     .section-title { font-size: 9px; }
-
-    /* Metric cards row */
-    .metric-cards { flex-wrap: wrap; gap: 8px; }
-    .metric-card { min-width: 120px; padding: 8px; }
-    .metric-card.primary { background: #eaeefc !important; color: #3a5abf !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .metric-card.primary .mc-label { color: #3a5abf !important; }
-    .metric-card.primary .mc-value { color: #3a5abf !important; }
-    .metric-card.primary .mc-sub { color: #6687e1 !important; }
-
-    /* Force colors to print */
-    .section-title, .input-prefix, .phase-dot,
-    .phase-table tr.total-row td,
-    .deduction-row span { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-    /* Chart */
+    .metric-cards { flex-wrap: wrap; gap: 6px; }
+    .metric-card { min-width: 110px; padding: 8px; }
+    .metric-card.primary { background: #eaeefc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .metric-card.primary .mc-label, .metric-card.primary .mc-value, .metric-card.primary .mc-sub { color: #3a5abf !important; }
+    .sub-panel { background: #f0f0f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .phase-table tr.total-row td { background: #eaeefc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .input-prefix { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .chart-wrap { overflow: visible; }
     .chart-wrap svg { width: 100% !important; min-width: 0 !important; }
-
-    /* Sub-panel */
-    .sub-panel { background: #f5f5f5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-    /* Grids */
     .grid-2 { grid-template-columns: 1fr 1fr; }
-    .grid-3 { grid-template-columns: repeat(3, 1fr); }
-
-    /* Input fields — show as plain text values */
-    .input-wrap { border: 1px solid #ccc; }
-    .input-wrap input { font-size: 12px; }
-
-    /* Header */
-    .app-logo { width: 32px; height: 32px; }
-    .app-title { font-size: 16px; }
+    .grid-3 { grid-template-columns: repeat(3,1fr); }
+    .app-logo { width: 28px; height: 28px; }
+    .app-title { font-size: 15px; }
     .app-sub { font-size: 11px; }
-
-    /* Phase table */
-    .phase-table th, .phase-table td { font-size: 11px; padding: 5px 6px; }
+    .phase-table th, .phase-table td { font-size: 11px; padding: 4px 6px; }
+    .print-section-label { font-size: 10px; font-weight: 600; color: #6687e1; letter-spacing: .08em; text-transform: uppercase; border-bottom: 1.5px solid #dde1ee; padding-bottom: 5px; margin-bottom: 10px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
 </head>
 <body>
 <div id="root"></div>
-
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script>
@@ -213,206 +145,149 @@ const { useState, useMemo, useRef, createElement: h, Fragment } = React;
 const LOGO_B64 = "data:image/webp;base64,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";
 
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-// Convert a 1-based absolute month index (1=Jan of base year, 13=Jan of year+1, etc.)
-// to a "Mon YYYY" label, anchored to the current real-world year.
 const BASE_YEAR = new Date().getFullYear();
-function monthLabel(absMonth) {
-  const idx  = (absMonth - 1) % 12;
-  const year = BASE_YEAR + Math.floor((absMonth - 1) / 12);
-  return MONTH_NAMES[idx] + " " + year;
+function monthLabel(m) {
+  return MONTH_NAMES[(m - 1) % 12] + " " + (BASE_YEAR + Math.floor((m - 1) / 12));
 }
-
-// Pre-build the 36 dropdown options once
-const MONTH_OPTIONS = Array.from({ length: 36 }, (_, i) => ({
-  value: i + 1,
-  label: monthLabel(i + 1),
-}));
+const MONTH_OPTIONS = Array.from({ length: 36 }, function(_, i) { return { value: i + 1, label: monthLabel(i + 1) }; });
 
 const COLORS = { prewire: "#6687e1", rough: "#1D9E75", final: "#c47a3a" };
 
-const DEFAULT_STATE = {
-  annualGoal: 3000000,
-  currentMonth: new Date().getMonth() + 1,
-  includeYTD: false,
-  ytdWritten: 0,
-  ytdRecognized: 0,
-  carryoverTotal: 0,
-  carryoverRecPct: 50,
-  servicePct: 0,
-};
-
 const DEFAULT_TYPES = [
   { id: 1, name: "Standard Residential", avgValue: 45000, duration: 6, prewireMonth: 1, roughMonth: 3, finalMonth: 6, prewirePct: 20, roughPct: 40, finalPct: 40, mixPct: 50 },
-  { id: 2, name: "Large Custom Home",    avgValue: 120000, duration: 10, prewireMonth: 2, roughMonth: 5, finalMonth: 10, prewirePct: 25, roughPct: 35, finalPct: 40, mixPct: 30 },
+  { id: 2, name: "Large Custom Home",    avgValue: 120000, duration: 10, prewireMonth: 2, roughMonth: 5, finalMonth: 10, prewirePct: 25, roughPct: 35, finalPct: 40, mixPct: 30 }
 ];
 
-function fmtDisplay(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
-function fmtResult(n)  { return "$" + Math.round(n).toLocaleString("en-US"); }
+var TODAY_MONTH = new Date().getMonth() + 1;
+
+function fmt(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
 function pct(n) { return Math.round(n) + "%"; }
-function parseDollar(str) {
-  const n = parseFloat(String(str).replace(/[^0-9.]/g, ""));
-  return isNaN(n) ? 0 : n;
-}
+function parseDollar(s) { var n = parseFloat(String(s).replace(/[^0-9.]/g, "")); return isNaN(n) ? 0 : n; }
 
-function DollarInput({ value, onChange }) {
-  const [focused, setFocused] = useState(false);
-  const [raw, setRaw] = useState(value === 0 ? "" : String(Math.round(value)));
-  const prevValue = useRef(value);
-  const inputRef = useRef(null);
-
-  if (!focused && value !== prevValue.current) {
-    prevValue.current = value;
+function DollarInput(props) {
+  var value = props.value, onChange = props.onChange;
+  var focused = useState(false); var setFocused = focused[1]; focused = focused[0];
+  var rawS = useState(value === 0 ? "" : String(Math.round(value))); var setRaw = rawS[1]; rawS = rawS[0];
+  var prevVal = useRef(value);
+  var inputRef = useRef(null);
+  if (!focused && value !== prevVal.current) {
+    prevVal.current = value;
     setRaw(value === 0 ? "" : String(Math.round(value)));
   }
-
-  const displayVal = focused ? raw : (value === 0 ? "" : Math.round(value).toLocaleString("en-US"));
-
+  var display = focused ? rawS : (value === 0 ? "" : Math.round(value).toLocaleString("en-US"));
   return h("div", { className: "input-wrap" },
     h("span", { className: "input-prefix" }, "$"),
     h("input", {
-      ref: inputRef,
-      type: "text",
-      inputMode: "numeric",
-      value: displayVal,
-      placeholder: "0",
-      onFocus: () => {
+      ref: inputRef, type: "text", inputMode: "numeric", value: display, placeholder: "0",
+      onFocus: function() {
         setFocused(true);
-        // Zero fields: clear immediately. Non-zero fields: select-all so typing replaces.
-        if (value === 0) {
-          setRaw("");
-        } else {
-          setRaw(String(Math.round(value)));
-          setTimeout(() => inputRef.current && inputRef.current.select(), 0);
-        }
+        if (value === 0) { setRaw(""); }
+        else { setRaw(String(Math.round(value))); setTimeout(function() { if (inputRef.current) inputRef.current.select(); }, 0); }
       },
-      onChange: e => {
-        const cleaned = e.target.value.replace(/[^0-9]/g, "");
-        setRaw(cleaned);
-        const n = cleaned === "" ? 0 : parseInt(cleaned, 10);
-        prevValue.current = n;
-        onChange(n);
+      onChange: function(e) {
+        var c = e.target.value.replace(/[^0-9]/g, "");
+        setRaw(c);
+        var n = c === "" ? 0 : parseInt(c, 10);
+        prevVal.current = n; onChange(n);
       },
-      onBlur: () => {
+      onBlur: function() {
         setFocused(false);
-        const n = parseDollar(raw);
-        prevValue.current = n;
-        onChange(n);
+        var n = parseDollar(rawS);
+        prevVal.current = n; onChange(n);
         setRaw(n === 0 ? "" : String(Math.round(n)));
       }
     })
   );
 }
 
-function NumInput({ value, onChange, prefix, min, max, step, clearOnZero, allowDecimal }) {
-  const [focused, setFocused] = useState(false);
-  const inputRef = useRef(null);
-  const effectiveStep = allowDecimal ? 0.1 : (step || 1);
-  const displayVal = (focused || !(value === 0 && clearOnZero)) ? value : "";
-
+function NumInput(props) {
+  var value = props.value, onChange = props.onChange, prefix = props.prefix,
+      min = props.min, max = props.max, step = props.step,
+      clearOnZero = props.clearOnZero, allowDecimal = props.allowDecimal;
+  var focusedS = useState(false); var setFocused = focusedS[1]; focusedS = focusedS[0];
+  var inputRef = useRef(null);
+  var effStep = allowDecimal ? 0.1 : (step || 1);
+  var display = (focusedS || !(value === 0 && clearOnZero)) ? value : "";
   return h("div", { className: "input-wrap" },
     prefix ? h("span", { className: "input-prefix" }, prefix) : null,
     h("input", {
-      ref: inputRef,
-      type: "number",
-      value: displayVal,
-      min, max,
-      step: effectiveStep,
+      ref: inputRef, type: "number", value: display, min: min, max: max, step: effStep,
       placeholder: clearOnZero ? "0" : undefined,
-      onFocus: e => {
+      onFocus: function(e) {
         setFocused(true);
-        if (clearOnZero && value === 0) {
-          e.target.value = "";
-        } else {
-          // Select-all so the user can immediately type a new value
-          setTimeout(() => inputRef.current && inputRef.current.select(), 0);
-        }
+        if (clearOnZero && value === 0) { e.target.value = ""; }
+        else { setTimeout(function() { if (inputRef.current) inputRef.current.select(); }, 0); }
       },
-      onChange: e => {
-        const raw = e.target.value;
+      onChange: function(e) {
+        var raw = e.target.value;
         if (raw === "" || raw === "-") { onChange(0); return; }
-        const n = allowDecimal ? parseFloat(raw) : parseInt(raw, 10);
+        var n = allowDecimal ? parseFloat(raw) : parseInt(raw, 10);
         if (!isNaN(n)) onChange(n);
       },
-      onBlur: () => setFocused(false)
+      onBlur: function() { setFocused(false); }
     })
   );
 }
 
-function Label({ children, hint }) {
-  return h("div", { className: "lbl" },
-    children,
-    hint ? h("div", { className: "lbl-hint" }, hint) : null
+function Lbl(props) {
+  return h("div", { className: "lbl" }, props.children,
+    props.hint ? h("div", { className: "lbl-hint" }, props.hint) : null
   );
 }
 
-function Section({ title, children }) {
+function Sec(props) {
   return h("div", { className: "section" },
-    h("div", { className: "section-title" }, title),
-    children
+    h("div", { className: "section-title" }, props.title),
+    props.children
   );
 }
 
-function MetricCard({ label, value, sub, primary }) {
-  return h("div", { className: "metric-card" + (primary ? " primary" : "") },
-    h("div", { className: "mc-label" }, label),
-    h("div", { className: "mc-value" }, value),
-    sub ? h("div", { className: "mc-sub" }, sub) : null
+function MCard(props) {
+  return h("div", { className: "metric-card" + (props.primary ? " primary" : "") },
+    h("div", { className: "mc-label" }, props.label),
+    h("div", { className: "mc-value" }, props.value),
+    props.sub ? h("div", { className: "mc-sub" }, props.sub) : null
   );
 }
 
-function DeductionRow({ label, value, color, bold }) {
+function DRow(props) {
   return h("div", { className: "deduction-row" },
-    h("span", { style: { color: bold ? "var(--text-primary)" : "var(--text-muted)", fontWeight: bold ? 600 : 400 } }, label),
-    h("span", { style: { color: color || "var(--text-primary)", fontWeight: bold ? 600 : 400 } }, value)
+    h("span", { style: { color: props.bold ? "var(--text-primary)" : "var(--text-muted)", fontWeight: props.bold ? 600 : 400 } }, props.label),
+    h("span", { style: { color: props.color || "var(--text-primary)", fontWeight: props.bold ? 600 : 400 } }, props.value)
   );
 }
 
-function MonthlyChart({ data, currentMonth }) {
-  const [hovered, setHovered] = useState(null);
-  const maxRev = Math.max(...data.map(d => d.revenue), 1);
-  const chartH = 200;
-  const totalW = data.length * 10;
-  const barW = 8.5;
-
-  // Split bars into non-hovered and hovered so the hovered tooltip renders last (on top)
-  const bars = data.map((d, i) => {
-    const barH = Math.max(1, (d.revenue / maxRev) * chartH);
-    const x = i * 10;
-    const y = chartH - barH;
-    const isPast = d.month < currentMonth;
-    const isCurrentYear = d.month >= currentMonth && d.month <= 12;
-    const fill = isPast ? "#c4ccd8" : isCurrentYear ? "#6687e1" : "#a8b8ee";
-    const label = monthLabel(d.month);
-    return { d, i, barH, x, y, fill, label };
+function MonthlyChart(props) {
+  var data = props.data, currentMonth = props.currentMonth;
+  var hovS = useState(null); var setHov = hovS[1]; hovS = hovS[0];
+  var maxRev = Math.max.apply(null, data.map(function(d) { return d.revenue; }).concat([1]));
+  var chartH = 200, totalW = data.length * 10, barW = 8.5;
+  var bars = data.map(function(d, i) {
+    var barH = Math.max(1, (d.revenue / maxRev) * chartH);
+    var x = i * 10, y = chartH - barH;
+    var isPast = d.month < currentMonth;
+    var isCY = d.month >= currentMonth && d.month <= 12;
+    var fill = isPast ? "#c4ccd8" : isCY ? "#6687e1" : "#a8b8ee";
+    return { d: d, i: i, barH: barH, x: x, y: y, fill: fill, label: monthLabel(d.month) };
   });
-
-  // Clamp tooltip so it never overflows left or right edge
-  function tooltipX(x) { return Math.max(0, Math.min(x, totalW - 68)); }
-  function tooltipY(y) { return Math.max(4, y - 24); }
-
+  function tx(x) { return Math.max(0, Math.min(x, totalW - 68)); }
+  function ty(y) { return Math.max(4, y - 26); }
   return h("div", null,
     h("div", { className: "chart-wrap" },
-      h("svg", {
-        viewBox: "0 0 " + Math.max(totalW, 100) + " " + (chartH + 30),
-        style: { width: "100%", minWidth: 600, display: "block" }
-      },
-        // Render all bars + axis labels first
-        ...bars.map(({ d, i, barH, x, y, fill, label }) =>
-          h("g", { key: "bar-" + i, onMouseEnter: () => setHovered(i), onMouseLeave: () => setHovered(null) },
-            h("rect", { x: x + 0.5, y, width: barW, height: barH, fill, rx: 1 }),
-            i % 3 === 0 ? h("text", { x: x + barW / 2, y: chartH + 10, textAnchor: "middle", fontSize: 3.8, fill: "#9aaabb" }, label) : null
-          )
-        ),
-        // Render hovered tooltip last so it paints on top of all bars
-        hovered !== null ? (() => {
-          const { x, y, d, label } = bars[hovered];
-          const tx = tooltipX(x - 26);
-          const ty = tooltipY(y);
-          return h("g", { key: "tooltip", style: { pointerEvents: "none" } },
-            h("rect", { x: tx, y: ty, width: 68, height: 22, fill: "#fff", stroke: "#c8cfde", strokeWidth: 0.6, rx: 3 }),
-            h("text", { x: tx + 34, y: ty + 8, textAnchor: "middle", fontSize: 3.6, fill: "#6b7a90" }, label),
-            h("text", { x: tx + 34, y: ty + 17, textAnchor: "middle", fontSize: 4.8, fill: "#1c2333", fontWeight: 600 }, fmtResult(d.revenue))
+      h("svg", { viewBox: "0 0 " + Math.max(totalW, 100) + " " + (chartH + 32), style: { width: "100%", minWidth: 600, display: "block" } },
+        bars.map(function(b) {
+          return h("g", { key: "b" + b.i, onMouseEnter: function() { setHov(b.i); }, onMouseLeave: function() { setHov(null); } },
+            h("rect", { x: b.x + 0.5, y: b.y, width: barW, height: b.barH, fill: b.fill, rx: 1 }),
+            b.i % 3 === 0 ? h("text", { x: b.x + barW / 2, y: chartH + 11, textAnchor: "middle", fontSize: 3.8, fill: "#9aaabb" }, b.label) : null
+          );
+        }),
+        hovS !== null ? (function() {
+          var b = bars[hovS];
+          var ttx = tx(b.x - 26), tty = ty(b.y);
+          return h("g", { key: "tt", style: { pointerEvents: "none" } },
+            h("rect", { x: ttx, y: tty, width: 68, height: 22, fill: "#fff", stroke: "#c8cfde", strokeWidth: 0.6, rx: 3 }),
+            h("text", { x: ttx + 34, y: tty + 9, textAnchor: "middle", fontSize: 3.6, fill: "#6b7a90" }, b.label),
+            h("text", { x: ttx + 34, y: tty + 18, textAnchor: "middle", fontSize: 4.8, fill: "#1c2333", fontWeight: 600 }, fmt(b.d.revenue))
           );
         })() : null
       )
@@ -425,46 +300,42 @@ function MonthlyChart({ data, currentMonth }) {
   );
 }
 
-function PhaseBreakdown({ projectTypes, totalMix, monthlyWritten }) {
-  const rows = projectTypes.map(t => {
-    const mix = totalMix > 0 ? t.mixPct / totalMix : 1 / projectTypes.length;
-    const m = monthlyWritten * mix;
-    const pw = m * (t.prewirePct / 100);
-    const ro = m * (t.roughPct / 100);
-    const fi = m * (t.finalPct / 100);
-    return { name: t.name, mix, pw, ro, fi, tot: pw + ro + fi };
+function PhaseBreakdown(props) {
+  var projectTypes = props.projectTypes, totalMix = props.totalMix, monthlyWritten = props.monthlyWritten;
+  var rows = projectTypes.map(function(t) {
+    var mix = totalMix > 0 ? t.mixPct / totalMix : 1 / projectTypes.length;
+    var m = monthlyWritten * mix;
+    var pw = m * (t.prewirePct / 100), ro = m * (t.roughPct / 100), fi = m * (t.finalPct / 100);
+    return { name: t.name, mix: mix, pw: pw, ro: ro, fi: fi, tot: pw + ro + fi };
   });
-
   return h("div", { style: { overflowX: "auto" } },
     h("table", { className: "phase-table" },
-      h("thead", null,
-        h("tr", null,
-          h("th", { style: { textAlign: "left", width: "28%" } }, "Project type"),
-          h("th", { className: "text-right text-muted" }, "Mix"),
-          h("th", { className: "text-right", style: { color: COLORS.prewire } }, "Prewire rev/mo"),
-          h("th", { className: "text-right", style: { color: COLORS.rough } }, "Rough-in rev/mo"),
-          h("th", { className: "text-right", style: { color: COLORS.final } }, "Final rev/mo"),
-          h("th", { className: "text-right text-muted" }, "Total rev/mo")
-        )
-      ),
+      h("thead", null, h("tr", null,
+        h("th", { style: { textAlign: "left", width: "28%" } }, "Project type"),
+        h("th", { className: "text-right text-muted" }, "Mix"),
+        h("th", { className: "text-right", style: { color: COLORS.prewire } }, "Prewire rev/mo"),
+        h("th", { className: "text-right", style: { color: COLORS.rough } }, "Rough-in rev/mo"),
+        h("th", { className: "text-right", style: { color: COLORS.final } }, "Final rev/mo"),
+        h("th", { className: "text-right text-muted" }, "Total rev/mo")
+      )),
       h("tbody", null,
-        ...rows.map((r, i) =>
-          h("tr", { key: i },
-            h("td", { style: { fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, r.name),
+        rows.map(function(r, i) {
+          return h("tr", { key: i },
+            h("td", { style: { fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, r.name),
             h("td", { className: "text-right text-muted" }, pct(r.mix * 100)),
-            h("td", { className: "text-right" }, fmtResult(r.pw)),
-            h("td", { className: "text-right" }, fmtResult(r.ro)),
-            h("td", { className: "text-right" }, fmtResult(r.fi)),
-            h("td", { className: "text-right", style: { fontWeight: 600 } }, fmtResult(r.tot))
-          )
-        ),
+            h("td", { className: "text-right" }, fmt(r.pw)),
+            h("td", { className: "text-right" }, fmt(r.ro)),
+            h("td", { className: "text-right" }, fmt(r.fi)),
+            h("td", { className: "text-right", style: { fontWeight: 600 } }, fmt(r.tot))
+          );
+        }),
         h("tr", { className: "total-row" },
           h("td", null, "Total"),
           h("td", { className: "text-right" }, "100%"),
-          h("td", { className: "text-right" }, fmtResult(rows.reduce((s, r) => s + r.pw, 0))),
-          h("td", { className: "text-right" }, fmtResult(rows.reduce((s, r) => s + r.ro, 0))),
-          h("td", { className: "text-right" }, fmtResult(rows.reduce((s, r) => s + r.fi, 0))),
-          h("td", { className: "text-right" }, fmtResult(rows.reduce((s, r) => s + r.tot, 0)))
+          h("td", { className: "text-right" }, fmt(rows.reduce(function(s,r){return s+r.pw;},0))),
+          h("td", { className: "text-right" }, fmt(rows.reduce(function(s,r){return s+r.ro;},0))),
+          h("td", { className: "text-right" }, fmt(rows.reduce(function(s,r){return s+r.fi;},0))),
+          h("td", { className: "text-right" }, fmt(rows.reduce(function(s,r){return s+r.tot;},0)))
         )
       )
     )
@@ -472,319 +343,208 @@ function PhaseBreakdown({ projectTypes, totalMix, monthlyWritten }) {
 }
 
 function App() {
-  const [annualGoal,      setAnnualGoal]      = useState(DEFAULT_STATE.annualGoal);
-  const [currentMonth,    setCurrentMonth]    = useState(DEFAULT_STATE.currentMonth);
-  const [includeYTD,      setIncludeYTD]      = useState(DEFAULT_STATE.includeYTD);
-  const [ytdWritten,      setYtdWritten]      = useState(DEFAULT_STATE.ytdWritten);
-  const [ytdRecognized,   setYtdRecognized]   = useState(DEFAULT_STATE.ytdRecognized);
-  const [carryoverTotal,  setCarryoverTotal]  = useState(DEFAULT_STATE.carryoverTotal);
-  const [carryoverRecPct, setCarryoverRecPct] = useState(DEFAULT_STATE.carryoverRecPct);
-  const [servicePct,      setServicePct]      = useState(DEFAULT_STATE.servicePct);
-  const [projectTypes,    setProjectTypes]    = useState(DEFAULT_TYPES);
-  const [nextId,          setNextId]          = useState(3);
-  const [activeTab,       setActiveTab]       = useState("setup");
-
-  // Remembers the month that was set before YTD was checked, so we can restore it on uncheck
-  const preYTDMonth = useRef(DEFAULT_STATE.currentMonth);
-  const todayMonth  = new Date().getMonth() + 1;
+  var annualGoalS = useState(3000000); var setAnnualGoal = annualGoalS[1]; var annualGoal = annualGoalS[0];
+  var currentMonthS = useState(TODAY_MONTH); var setCurrentMonth = currentMonthS[1]; var currentMonth = currentMonthS[0];
+  var includeYTDS = useState(false); var setIncludeYTD = includeYTDS[1]; var includeYTD = includeYTDS[0];
+  var ytdWrittenS = useState(0); var setYtdWritten = ytdWrittenS[1]; var ytdWritten = ytdWrittenS[0];
+  var ytdRecognizedS = useState(0); var setYtdRecognized = ytdRecognizedS[1]; var ytdRecognized = ytdRecognizedS[0];
+  var carryoverTotalS = useState(0); var setCarryoverTotal = carryoverTotalS[1]; var carryoverTotal = carryoverTotalS[0];
+  var carryoverRecPctS = useState(50); var setCarryoverRecPct = carryoverRecPctS[1]; var carryoverRecPct = carryoverRecPctS[0];
+  var servicePctS = useState(0); var setServicePct = servicePctS[1]; var servicePct = servicePctS[0];
+  var projectTypesS = useState(DEFAULT_TYPES.map(function(t){return Object.assign({},t);})); var setProjectTypes = projectTypesS[1]; var projectTypes = projectTypesS[0];
+  var nextIdS = useState(3); var setNextId = nextIdS[1]; var nextId = nextIdS[0];
+  var activeTabS = useState("setup"); var setActiveTab = activeTabS[1]; var activeTab = activeTabS[0];
+  var preYTDMonth = useRef(TODAY_MONTH);
 
   function handleYTDToggle(checked) {
     if (checked) {
-      // Save current month selection, then snap to today's month
       preYTDMonth.current = currentMonth;
-      setCurrentMonth(todayMonth);
+      setCurrentMonth(TODAY_MONTH);
     } else {
-      // Restore the month that was set before YTD was checked
       setCurrentMonth(preYTDMonth.current);
     }
     setIncludeYTD(checked);
   }
 
   function handleReset() {
-    setAnnualGoal(DEFAULT_STATE.annualGoal);
-    setCurrentMonth(DEFAULT_STATE.currentMonth);
-    preYTDMonth.current = DEFAULT_STATE.currentMonth;
-    setIncludeYTD(DEFAULT_STATE.includeYTD);
-    setYtdWritten(DEFAULT_STATE.ytdWritten);
-    setYtdRecognized(DEFAULT_STATE.ytdRecognized);
-    setCarryoverTotal(DEFAULT_STATE.carryoverTotal);
-    setCarryoverRecPct(DEFAULT_STATE.carryoverRecPct);
-    setServicePct(DEFAULT_STATE.servicePct);
-    setProjectTypes(DEFAULT_TYPES.map(t => Object.assign({}, t)));
-    setNextId(3);
-    setActiveTab("setup");
-  }
-
-  function handleExport() {
-    window.print();
+    setAnnualGoal(3000000); setCurrentMonth(TODAY_MONTH);
+    preYTDMonth.current = TODAY_MONTH;
+    setIncludeYTD(false); setYtdWritten(0); setYtdRecognized(0);
+    setCarryoverTotal(0); setCarryoverRecPct(50); setServicePct(0);
+    setProjectTypes(DEFAULT_TYPES.map(function(t){return Object.assign({},t);}));
+    setNextId(3); setActiveTab("setup");
   }
 
   function addType() {
     if (projectTypes.length >= 5) return;
-    setProjectTypes(prev => [...prev, {
-      id: nextId, name: "Project type " + nextId, avgValue: 50000, duration: 8,
-      prewireMonth: 1, roughMonth: 4, finalMonth: 8,
-      prewirePct: 25, roughPct: 35, finalPct: 40, mixPct: 0,
-    }]);
-    setNextId(n => n + 1);
+    setProjectTypes(function(prev) {
+      return prev.concat([{ id: nextId, name: "Project type " + nextId, avgValue: 50000, duration: 8, prewireMonth: 1, roughMonth: 4, finalMonth: 8, prewirePct: 25, roughPct: 35, finalPct: 40, mixPct: 0 }]);
+    });
+    setNextId(function(n) { return n + 1; });
   }
-  function removeType(id) { setProjectTypes(prev => prev.filter(t => t.id !== id)); }
+  function removeType(id) { setProjectTypes(function(prev) { return prev.filter(function(t){return t.id!==id;}); }); }
   function updateType(id, field, val) {
-    setProjectTypes(prev => prev.map(t => t.id === id ? Object.assign({}, t, { [field]: val }) : t));
+    setProjectTypes(function(prev) { return prev.map(function(t){ return t.id===id ? Object.assign({},t,{[field]:val}) : t; }); });
   }
 
-  const totalMix = projectTypes.reduce((s, t) => s + t.mixPct, 0);
+  var totalMix = projectTypes.reduce(function(s,t){return s+t.mixPct;},0);
 
-  const calc = useMemo(() => {
+  var calc = useMemo(function() {
     if (!projectTypes.length) return null;
-    const norm = projectTypes.map(t => Object.assign({}, t, {
-      normMix: totalMix > 0 ? t.mixPct / totalMix : 1 / projectTypes.length
-    }));
-    const weightedAvgValue = norm.reduce((s, t) => s + t.avgValue * t.normMix, 0);
-    const serviceRevenue   = annualGoal * (servicePct / 100);
-    const carryoverRevenue = carryoverTotal * (carryoverRecPct / 100);
-    const ytdRec           = includeYTD ? ytdRecognized : 0;
-    const revenueNeededFromSales = Math.max(0, annualGoal - serviceRevenue - carryoverRevenue - ytdRec);
+    var norm = projectTypes.map(function(t) {
+      return Object.assign({},t,{ normMix: totalMix>0 ? t.mixPct/totalMix : 1/projectTypes.length });
+    });
+    var wAvg = norm.reduce(function(s,t){return s+t.avgValue*t.normMix;},0);
+    var svcRev = annualGoal*(servicePct/100);
+    var coRev = carryoverTotal*(carryoverRecPct/100);
+    var ytdRec = includeYTD ? ytdRecognized : 0;
+    var needFromSales = Math.max(0, annualGoal - svcRev - coRev - ytdRec);
+    var moRevNeeded = needFromSales / 12;
 
-    // Given a write month (1–12) and a project type, return the revenue that
-    // falls within calendar months 1–12 per $1 of contract value written.
-    function revPctAtOffset(offset, t) {
-      let r = 0;
-      if (Math.round(offset * 10) === Math.round(t.prewireMonth * 10)) r += t.prewirePct / 100;
-      if (Math.round(offset * 10) === Math.round(t.roughMonth   * 10)) r += t.roughPct   / 100;
-      if (Math.round(offset * 10) === Math.round(t.finalMonth   * 10)) r += t.finalPct   / 100;
+    function revPct(offset, t) {
+      var r = 0;
+      if (Math.round(offset*10)===Math.round(t.prewireMonth*10)) r+=t.prewirePct/100;
+      if (Math.round(offset*10)===Math.round(t.roughMonth*10))   r+=t.roughPct/100;
+      if (Math.round(offset*10)===Math.round(t.finalMonth*10))   r+=t.finalPct/100;
       return r;
     }
-
-    // Build full revenue schedule for $cv written in calendar month wm.
-    // Returns { calendarMonth: revenueAmount } across the 36-month horizon.
     function buildSched(wm, t, cv) {
-      const out = {};
-      const steps = Math.round(t.duration * 10);
-      for (let s = 1; s <= steps; s++) {
-        const offset = s / 10;
-        const rev = revPctAtOffset(offset, t) * cv;
-        if (rev > 0) {
-          const m = Math.ceil(wm + offset - 1);
-          out[m] = (out[m] || 0) + rev;
-        }
+      var out={}, steps=Math.round(t.duration*10);
+      for (var s=1;s<=steps;s++) {
+        var off=s/10, rev=revPct(off,t)*cv;
+        if (rev>0) { var m=Math.ceil(wm+off-1); out[m]=(out[m]||0)+rev; }
       }
       return out;
     }
-
-    // For $1 written uniformly every month Jan–Dec, calculate how much of that
-    // revenue lands IN the same calendar year (months 1–12).
-    // This is the true "in-year yield" of a full year of consistent writing.
-    // We sum across all 12 write months, weighted by project mix.
-    let inYearYieldPerDollarWritten = 0;
-    for (let wm = 1; wm <= 12; wm++) {
-      norm.forEach(t => {
-        const sched = buildSched(wm, t, t.normMix); // $1 * mix weight
-        Object.keys(sched).forEach(m => {
-          if (Number(m) >= 1 && Number(m) <= 12) {
-            inYearYieldPerDollarWritten += sched[m];
-          }
-        });
+    var inYearYield=0;
+    for (var wm=1;wm<=12;wm++) {
+      norm.forEach(function(t) {
+        var sc=buildSched(wm,t,t.normMix);
+        Object.keys(sc).forEach(function(m){ if(Number(m)>=1&&Number(m)<=12) inYearYield+=sc[m]; });
       });
     }
-    // inYearYieldPerDollarWritten now represents: for every $1 written per month
-    // across all 12 months, this many dollars recognize in-year.
-    // To recognize $revenueNeededFromSales in-year, we need:
-    // monthlyWritten * inYearYieldPerDollarWritten = revenueNeededFromSales
-    const monthlyWrittenSalesNeeded = inYearYieldPerDollarWritten > 0
-      ? revenueNeededFromSales / inYearYieldPerDollarWritten
-      : 0;
-
-    // Monthly revenue target is simply the in-year revenue divided by 12
-    // (used for the goal line on the chart — what each month needs to average)
-    const monthlyRevNeeded = revenueNeededFromSales / 12;
-
-    // Build the 36-month revenue projection using the solved monthly written figure
-    const revByMonth = {};
-    for (let i = 1; i <= 36; i++) revByMonth[i] = 0;
-    for (let wm = 1; wm <= 36; wm++) {
-      norm.forEach(t => {
-        const contracts = (monthlyWrittenSalesNeeded * t.normMix) / t.avgValue;
-        const sched = buildSched(wm, t, t.avgValue * contracts);
-        Object.keys(sched).forEach(m => {
-          if (revByMonth[m] !== undefined) revByMonth[m] += sched[m];
-        });
+    var moWritten = inYearYield>0 ? needFromSales/inYearYield : 0;
+    var revByMo={};
+    for (var i=1;i<=36;i++) revByMo[i]=0;
+    for (var wm2=1;wm2<=36;wm2++) {
+      norm.forEach(function(t) {
+        var c2=(moWritten*t.normMix)/t.avgValue;
+        var sc2=buildSched(wm2,t,t.avgValue*c2);
+        Object.keys(sc2).forEach(function(m){ if(revByMo[m]!==undefined) revByMo[m]+=sc2[m]; });
       });
     }
-
-    // Layer in YTD written sales already contracted (spread evenly across past months)
-    if (includeYTD && ytdWritten > 0 && currentMonth > 1) {
-      for (let wm = 1; wm < currentMonth; wm++) {
-        norm.forEach(t => {
-          const cv = (ytdWritten / (currentMonth - 1)) * t.normMix;
-          const sched = buildSched(wm, t, cv);
-          Object.keys(sched).forEach(m => {
-            if (revByMonth[m] !== undefined) revByMonth[m] += sched[m];
-          });
+    if (includeYTD && ytdWritten>0 && currentMonth>1) {
+      for (var wm3=1;wm3<currentMonth;wm3++) {
+        norm.forEach(function(t) {
+          var cv3=(ytdWritten/(currentMonth-1))*t.normMix;
+          var sc3=buildSched(wm3,t,cv3);
+          Object.keys(sc3).forEach(function(m){ if(revByMo[m]!==undefined) revByMo[m]+=sc3[m]; });
         });
       }
     }
-
-    // In-year revenue total projected from the solved monthly written sales figure
-    const projectedInYearRevenue = Object.keys(revByMonth)
-      .filter(m => Number(m) >= 1 && Number(m) <= 12)
-      .reduce((s, m) => s + revByMonth[m], 0);
-
+    var projInYear=Object.keys(revByMo).filter(function(m){return Number(m)>=1&&Number(m)<=12;}).reduce(function(s,m){return s+revByMo[m];},0);
     return {
-      monthlyWrittenSalesNeeded,
-      contractsPerMonth: monthlyWrittenSalesNeeded / weightedAvgValue,
-      revenueNeededFromSales,
-      monthlyRevNeeded,
-      inYearYieldPct: inYearYieldPerDollarWritten > 0
-        ? (inYearYieldPerDollarWritten / 12) * 100
-        : 0,
-      projectedInYearRevenue,
-      serviceRevenue,
-      carryoverRevenue,
-      ytdRec,
-      revenueByMonthArr: Object.keys(revByMonth).map(m => ({ month: Number(m), revenue: revByMonth[m] }))
+      moWritten: moWritten,
+      contractsPer: moWritten/wAvg,
+      needFromSales: needFromSales,
+      moRevNeeded: moRevNeeded,
+      yieldPct: inYearYield>0 ? (inYearYield/12)*100 : 0,
+      projInYear: projInYear,
+      svcRev: svcRev,
+      coRev: coRev,
+      ytdRec: ytdRec,
+      revArr: Object.keys(revByMo).map(function(m){return {month:Number(m),revenue:revByMo[m]};})
     };
   }, [annualGoal, currentMonth, ytdWritten, ytdRecognized, includeYTD, carryoverTotal, carryoverRecPct, servicePct, projectTypes, totalMix]);
 
-  const tabs = [{ id: "setup", label: "Setup" }, { id: "projects", label: "Project types" }, { id: "results", label: "Results" }];
+  var allPhaseErrors = projectTypes.reduce(function(acc,t) {
+    if (t.prewireMonth>t.duration) acc.push({name:t.name,msg:"Prewire month "+t.prewireMonth+" exceeds duration of "+t.duration+" months"});
+    if (t.roughMonth>t.duration)   acc.push({name:t.name,msg:"Rough-in month "+t.roughMonth+" exceeds duration of "+t.duration+" months"});
+    if (t.finalMonth>t.duration)   acc.push({name:t.name,msg:"Final month "+t.finalMonth+" exceeds duration of "+t.duration+" months"});
+    return acc;
+  },[]);
 
-  return h("div", { className: "app" },
+  var tabs = [{id:"setup",label:"Setup"},{id:"projects",label:"Project types"},{id:"results",label:"Results"}];
 
-    h("div", { className: "app-header" },
-      h("div", { className: "app-header-left" },
-        h("img", { src: LOGO_B64, className: "app-logo", alt: "GA logo" }),
-        h("div", null,
-          h("div", { className: "app-title" }, "Revenue Recognition Calculator"),
-          h("div", { className: "app-sub" }, "Custom integration services — written sales planning tool")
-        )
-      ),
-      activeTab === "setup"
-        ? h("button", { className: "btn btn-reset", onClick: handleReset }, "↺ Reset all")
-        : null
-    ),
-
-    h("div", { className: "tabs" },
-      ...tabs.map(t => h("button", {
-        key: t.id,
-        className: "tab-btn" + (activeTab === t.id ? " active" : ""),
-        onClick: () => setActiveTab(t.id)
-      }, t.label))
-    ),
-
-    /* ─── SETUP TAB ─── */
-    activeTab === "setup" ? h(Fragment, null,
-
-      h(Section, { title: "Annual goal" },
+  function renderSetup() {
+    return h(Fragment, null,
+      h(Sec, { title: "Annual goal" },
         h("div", { className: "grid-2" },
+          h("div", null, h(Lbl, null, "Annual revenue goal"), h(DollarInput, { value: annualGoal, onChange: setAnnualGoal })),
           h("div", null,
-            h(Label, null, "Annual revenue goal"),
-            h(DollarInput, { value: annualGoal, onChange: setAnnualGoal })
-          ),
-          h("div", null,
-            h(Label, null, "Current month"),
-            h("select", { className: "styled", value: currentMonth, onChange: e => setCurrentMonth(Number(e.target.value)) },
-              ...MONTH_OPTIONS.map(o => h("option", { key: o.value, value: o.value }, o.label))
+            h(Lbl, null, "Current month"),
+            h("select", { className: "styled", value: currentMonth, onChange: function(e){setCurrentMonth(Number(e.target.value));} },
+              MONTH_OPTIONS.map(function(o){ return h("option",{key:o.value,value:o.value},o.label); })
             )
           )
         )
       ),
-
-      h(Section, { title: "Service revenue" },
+      h(Sec, { title: "Service revenue" },
         h("p", { className: "helper-text" }, "Service revenue is recognized independently of written sales and is deducted from the sales-driven target."),
         h("div", { className: "grid-2", style: { alignItems: "end" } },
           h("div", null,
-            h(Label, { hint: "As a percentage of the annual revenue goal" }, "Service revenue %"),
-            h(NumInput, { value: servicePct, onChange: v => setServicePct(Math.min(100, Math.max(0, v))), prefix: "%", min: 0, max: 100, clearOnZero: true })
+            h(Lbl, { hint: "As a percentage of the annual revenue goal" }, "Service revenue %"),
+            h(NumInput, { value: servicePct, onChange: function(v){setServicePct(Math.min(100,Math.max(0,v)));}, prefix: "%", min: 0, max: 100, clearOnZero: true })
           ),
-          h("div", { className: "info-box" },
-            "Service revenue: ", h("strong", null, fmtDisplay(annualGoal * servicePct / 100))
-          )
+          h("div", { className: "info-box" }, "Service revenue: ", h("strong", null, fmt(annualGoal*servicePct/100)))
         )
       ),
-
-      h(Section, { title: "Carryover pipeline" },
+      h(Sec, { title: "Carryover pipeline" },
         h("p", { className: "helper-text" }, "Work-in-progress contracts carried into this year from the prior year."),
         h("div", { className: "grid-2" },
           h("div", null,
-            h(Label, { hint: "Total contract value of WIP carried from prior year" }, "Carryover pipeline total"),
+            h(Lbl, { hint: "Total contract value of WIP carried from prior year" }, "Carryover pipeline total"),
             h(DollarInput, { value: carryoverTotal, onChange: setCarryoverTotal })
           ),
           h("div", null,
-            h(Label, { hint: "Portion expected to be recognized as revenue this year" }, "% recognized this year"),
-            h(NumInput, { value: carryoverRecPct, onChange: v => setCarryoverRecPct(Math.min(100, Math.max(0, v))), prefix: "%", min: 0, max: 100 })
+            h(Lbl, { hint: "Portion expected to be recognized as revenue this year" }, "% recognized this year"),
+            h(NumInput, { value: carryoverRecPct, onChange: function(v){setCarryoverRecPct(Math.min(100,Math.max(0,v)));}, prefix: "%", min: 0, max: 100 })
           )
         ),
-        carryoverTotal > 0
-          ? h("div", { className: "info-box mt-8" },
-              "Carryover revenue applied this year: ",
-              h("strong", null, fmtDisplay(carryoverTotal * carryoverRecPct / 100))
-            )
-          : null
+        carryoverTotal > 0 ? h("div", { className: "info-box mt-8" }, "Carryover revenue applied this year: ", h("strong", null, fmt(carryoverTotal*carryoverRecPct/100))) : null
       ),
-
-      h(Section, { title: "Year-to-date actuals" },
+      h(Sec, { title: "Year-to-date actuals" },
         h("div", { className: "ytd-toggle-row" },
-          h("input", { type: "checkbox", id: "ytd-chk", checked: includeYTD, onChange: e => handleYTDToggle(e.target.checked) }),
+          h("input", { type: "checkbox", id: "ytd-chk", checked: includeYTD, onChange: function(e){handleYTDToggle(e.target.checked);} }),
           h("label", { htmlFor: "ytd-chk", style: { fontSize: 14, cursor: "pointer", color: "var(--text-muted)" } }, "Include YTD actuals in calculation")
         ),
         includeYTD ? h("div", { className: "grid-2" },
-          h("div", null,
-            h(Label, null, "YTD written sales contracted"),
-            h(DollarInput, { value: ytdWritten, onChange: setYtdWritten })
-          ),
-          h("div", null,
-            h(Label, null, "YTD revenue already recognized"),
-            h(DollarInput, { value: ytdRecognized, onChange: setYtdRecognized })
-          )
+          h("div", null, h(Lbl, null, "YTD written sales contracted"), h(DollarInput, { value: ytdWritten, onChange: setYtdWritten })),
+          h("div", null, h(Lbl, null, "YTD revenue already recognized"), h(DollarInput, { value: ytdRecognized, onChange: setYtdRecognized }))
         ) : null
       )
+    );
+  }
 
-    ) : null,
-
-    /* ─── PROJECTS TAB ─── */
-    activeTab === "projects" ? h(Fragment, null,
-      ...projectTypes.map((t, idx) => {
-        const pctSum = t.prewirePct + t.roughPct + t.finalPct;
-        const pctOk = Math.abs(pctSum - 100) < 1;
-        const phaseErrors = [
-          t.prewireMonth > t.duration && "Prewire (month " + t.prewireMonth + ") exceeds project duration (" + t.duration + " months)",
-          t.roughMonth   > t.duration && "Rough-in (month " + t.roughMonth   + ") exceeds project duration (" + t.duration + " months)",
-          t.finalMonth   > t.duration && "Final (month "    + t.finalMonth   + ") exceeds project duration (" + t.duration + " months)",
+  function renderProjects() {
+    return h(Fragment, null,
+      projectTypes.map(function(t, idx) {
+        var pctSum = t.prewirePct+t.roughPct+t.finalPct;
+        var pctOk = Math.abs(pctSum-100)<1;
+        var phaseErrs = [
+          t.prewireMonth>t.duration && "Prewire (month "+t.prewireMonth+") exceeds project duration ("+t.duration+" months)",
+          t.roughMonth>t.duration   && "Rough-in (month "+t.roughMonth+") exceeds project duration ("+t.duration+" months)",
+          t.finalMonth>t.duration   && "Final (month "+t.finalMonth+") exceeds project duration ("+t.duration+" months)"
         ].filter(Boolean);
-        return h(Section, { key: t.id, title: "Project type " + (idx + 1) },
+        return h(Sec, { key: t.id, title: "Project type " + (idx+1) },
           h("div", { className: "name-row" },
-            h("input", {
-              type: "text", className: "styled", value: t.name,
-              onChange: e => updateType(t.id, "name", e.target.value),
-              placeholder: "Project type name"
-            }),
-            projectTypes.length > 1
-              ? h("button", { className: "btn btn-remove", onClick: () => removeType(t.id) }, "Remove")
-              : null
+            h("input", { type: "text", className: "styled", value: t.name, placeholder: "Project type name", onChange: function(e){updateType(t.id,"name",e.target.value);} }),
+            projectTypes.length > 1 ? h("button", { className: "btn btn-remove", onClick: function(){removeType(t.id);} }, "Remove") : null
           ),
           h("div", { className: "grid-3 mb-12" },
-            h("div", null,
-              h(Label, null, "Avg contract value"),
-              h(DollarInput, { value: t.avgValue, onChange: v => updateType(t.id, "avgValue", v) })
-            ),
-            h("div", null,
-              h(Label, null, "Project duration (months)"),
-              h(NumInput, { value: t.duration, onChange: v => updateType(t.id, "duration", Math.max(0.1, v)), min: 0.1, max: 36, allowDecimal: true })
-            ),
-            h("div", null,
-              h(Label, null, "Sales mix %"),
-              h(NumInput, { value: t.mixPct, onChange: v => updateType(t.id, "mixPct", v), prefix: "%", min: 0, max: 100, clearOnZero: true })
-            )
+            h("div", null, h(Lbl, null, "Avg contract value"), h(DollarInput, { value: t.avgValue, onChange: function(v){updateType(t.id,"avgValue",v);} })),
+            h("div", null, h(Lbl, null, "Project duration (months)"), h(NumInput, { value: t.duration, onChange: function(v){updateType(t.id,"duration",Math.max(0.1,v));}, min: 0.1, max: 36, allowDecimal: true })),
+            h("div", null, h(Lbl, null, "Sales mix %"), h(NumInput, { value: t.mixPct, onChange: function(v){updateType(t.id,"mixPct",v);}, prefix: "%", min: 0, max: 100, clearOnZero: true }))
           ),
           h("div", { className: "sub-panel" },
             h("div", { className: "sub-panel-title" }, "Phase schedule — month within project & revenue %"),
             h("div", { className: "grid-3" },
-              ...[
+              [
                 { key: "pw", label: "Prewire",  mf: "prewireMonth", pf: "prewirePct", color: COLORS.prewire },
                 { key: "ro", label: "Rough-in", mf: "roughMonth",   pf: "roughPct",   color: COLORS.rough },
-                { key: "fi", label: "Final",    mf: "finalMonth",   pf: "finalPct",   color: COLORS.final },
-              ].map(ph => {
-                const monthOver = t[ph.mf] > t.duration;
+                { key: "fi", label: "Final",    mf: "finalMonth",   pf: "finalPct",   color: COLORS.final }
+              ].map(function(ph) {
+                var over = t[ph.mf] > t.duration;
                 return h("div", { key: ph.key },
                   h("div", { style: { display: "flex", alignItems: "center", marginBottom: 6 } },
                     h("span", { className: "phase-dot", style: { background: ph.color } }),
@@ -792,259 +552,182 @@ function App() {
                   ),
                   h("div", { style: { display: "flex", gap: 6 } },
                     h("div", { style: { flex: 1 } },
-                      h(Label, null, "Month"),
-                      h("div", { className: "input-wrap", style: monthOver ? { borderColor: "var(--error)" } : {} },
+                      h(Lbl, null, "Month"),
+                      h("div", { className: "input-wrap", style: over ? { borderColor: "var(--error)" } : {} },
                         h("input", {
                           type: "number", value: t[ph.mf], min: 1, step: 1,
-                          style: { border: "none", background: "transparent", padding: "7px 10px", width: "100%", fontSize: 14, color: monthOver ? "var(--error)" : "var(--text-primary)", outline: "none", fontFamily: "inherit" },
-                          onFocus: e => setTimeout(() => e.target.select(), 0),
-                          onChange: e => { const n = parseInt(e.target.value, 10); if (!isNaN(n) && n >= 1) updateType(t.id, ph.mf, n); },
+                          style: { border: "none", background: "transparent", padding: "7px 10px", width: "100%", fontSize: 14, color: over ? "var(--error)" : "var(--text-primary)", outline: "none", fontFamily: "inherit" },
+                          onFocus: function(e){setTimeout(function(){e.target.select();},0);},
+                          onChange: function(e){var n=parseInt(e.target.value,10); if(!isNaN(n)&&n>=1) updateType(t.id,ph.mf,n);}
                         })
                       )
                     ),
                     h("div", { style: { flex: 1 } },
-                      h(Label, null, "Rev %"),
-                      h(NumInput, { value: t[ph.pf], onChange: v => updateType(t.id, ph.pf, v), prefix: "%", min: 0, max: 100 })
+                      h(Lbl, null, "Rev %"),
+                      h(NumInput, { value: t[ph.pf], onChange: function(v){updateType(t.id,ph.pf,v);}, prefix: "%", min: 0, max: 100 })
                     )
                   )
                 );
               })
             ),
-            phaseErrors.length > 0
-              ? h("div", { style: { marginTop: 10 } },
-                  ...phaseErrors.map((msg, i) =>
-                    h("div", { key: i, className: "pct-err" }, "\u26a0\ufe0f " + msg)
-                  )
-                )
-              : null,
-            !pctOk ? h("div", { className: "pct-err" }, "Phase percentages sum to " + pctSum + "% — must equal 100%") : null
+            phaseErrs.length > 0 ? h("div", { style: { marginTop: 10 } }, phaseErrs.map(function(msg,i){ return h("div",{key:i,className:"pct-err"},"\u26a0\ufe0f "+msg); })) : null,
+            !pctOk ? h("div", { className: "pct-err" }, "Phase percentages sum to "+pctSum+"% — must equal 100%") : null
           )
         );
       }),
       h("div", { className: "add-remove-row" },
-        projectTypes.length < 5
-          ? h("button", { className: "btn", onClick: addType }, "+ Add project type")
-          : null,
-        h("div", { className: "mix-status " + (totalMix === 100 ? "mix-ok" : "mix-err") },
-          "Sales mix total: " + totalMix + "%" + (totalMix !== 100 ? " (must equal 100%)" : "")
-        )
+        projectTypes.length < 5 ? h("button", { className: "btn", onClick: addType }, "+ Add project type") : null,
+        h("div", { className: "mix-status " + (totalMix===100?"mix-ok":"mix-err") }, "Sales mix total: "+totalMix+"%"+(totalMix!==100?" (must equal 100%)":""))
       )
-    ) : null,
+    );
+  }
 
-    /* ─── RESULTS TAB ─── */
-    activeTab === "results" ? (() => {
-      // Collect all phase-month violations across all project types
-      const allPhaseErrors = projectTypes.flatMap(t => [
-        t.prewireMonth > t.duration && { type: t.name, msg: "Prewire month " + t.prewireMonth + " exceeds duration of " + t.duration + " months" },
-        t.roughMonth   > t.duration && { type: t.name, msg: "Rough-in month " + t.roughMonth   + " exceeds duration of " + t.duration + " months" },
-        t.finalMonth   > t.duration && { type: t.name, msg: "Final month "    + t.finalMonth   + " exceeds duration of " + t.duration + " months" },
-      ].filter(Boolean));
-
-      if (allPhaseErrors.length > 0) {
-        return h("div", { className: "section", style: { borderColor: "var(--error-border)", background: "var(--error-light)" } },
-          h("div", { style: { display: "flex", alignItems: "flex-start", gap: 10 } },
-            h("span", { style: { fontSize: 18, lineHeight: 1, marginTop: 1 } }, "\u26a0\ufe0f"),
-            h("div", null,
-              h("div", { style: { fontWeight: 600, fontSize: 14, color: "var(--error)", marginBottom: 8 } },
-                "Results blocked — phase month errors must be fixed first"
-              ),
-              h("div", { style: { fontSize: 13, color: "var(--error)", marginBottom: 10 } },
-                "One or more phase months exceed the project duration. Go to the Project types tab to correct them."
-              ),
-              ...allPhaseErrors.map((e, i) =>
-                h("div", { key: i, style: { fontSize: 13, color: "var(--error)", padding: "4px 0", borderTop: i === 0 ? "1px solid var(--error-border)" : "none" } },
-                  h("strong", null, e.type + ": "), e.msg
-                )
-              )
-            )
+  function renderResults() {
+    if (allPhaseErrors.length > 0) {
+      return h("div", { className: "section", style: { borderColor: "var(--error-border)", background: "var(--error-light)" } },
+        h("div", { style: { display: "flex", gap: 10 } },
+          h("span", { style: { fontSize: 18 } }, "\u26a0\ufe0f"),
+          h("div", null,
+            h("div", { style: { fontWeight: 600, fontSize: 14, color: "var(--error)", marginBottom: 8 } }, "Results blocked — phase month errors must be fixed first"),
+            h("div", { style: { fontSize: 13, color: "var(--error)", marginBottom: 10 } }, "One or more phase months exceed the project duration. Go to Project types to correct them."),
+            allPhaseErrors.map(function(e,i){ return h("div",{key:i,style:{fontSize:13,color:"var(--error)",padding:"4px 0",borderTop:i===0?"1px solid var(--error-border)":"none"}},h("strong",null,e.name+": "),e.msg); })
           )
-        );
-      }
-
-      if (!calc) {
-        return h("div", { className: "notice" }, "Add at least one project type to see results.");
-      }
-
-      return h(Fragment, null,
-
+        )
+      );
+    }
+    if (!calc) return h("div", { className: "notice" }, "Add at least one project type to see results.");
+    return h(Fragment, null,
       h("div", { style: { display: "flex", justifyContent: "flex-end", marginBottom: "1rem" } },
-        h("button", { className: "btn btn-pdf", onClick: handleExport }, "\u2913 Export PDF")
+        h("button", { className: "btn-pdf", onClick: function(){window.print();} }, "\u2913 Export PDF")
       ),
-
-      h(Section, { title: "Revenue goal breakdown" },
+      h(Sec, { title: "Revenue goal breakdown" },
         h("div", { style: { maxWidth: 500 } },
-          h(DeductionRow, { label: "Annual revenue goal", value: fmtResult(annualGoal), bold: true }),
-          h(DeductionRow, { label: "Service revenue deducted (" + servicePct + "% of goal)", value: "− " + fmtResult(calc.serviceRevenue), color: "var(--text-muted)" }),
-          h(DeductionRow, { label: "Carryover pipeline recognized (" + carryoverRecPct + "% of " + fmtResult(carryoverTotal) + ")", value: "− " + fmtResult(calc.carryoverRevenue), color: "var(--text-muted)" }),
-          includeYTD && ytdRecognized > 0
-            ? h(DeductionRow, { label: "YTD revenue already recognized", value: "− " + fmtResult(calc.ytdRec), color: "var(--text-muted)" })
-            : null,
+          h(DRow, { label: "Annual revenue goal", value: fmt(annualGoal), bold: true }),
+          h(DRow, { label: "Service revenue deducted ("+servicePct+"% of goal)", value: "- "+fmt(calc.svcRev), color: "var(--text-muted)" }),
+          h(DRow, { label: "Carryover pipeline recognized ("+carryoverRecPct+"% of "+fmt(carryoverTotal)+")", value: "- "+fmt(calc.coRev), color: "var(--text-muted)" }),
+          includeYTD && ytdRecognized > 0 ? h(DRow, { label: "YTD revenue already recognized", value: "- "+fmt(calc.ytdRec), color: "var(--text-muted)" }) : null,
           h("div", { className: "deduction-row total-row" },
             h("span", { style: { fontWeight: 600 } }, "Revenue needed from new written sales"),
-            h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmtResult(calc.revenueNeededFromSales))
+            h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmt(calc.needFromSales))
           )
         )
       ),
-
       h("div", { className: "metric-cards" },
-        h(MetricCard, { label: "Monthly written sales needed", value: fmtResult(calc.monthlyWrittenSalesNeeded), sub: calc.contractsPerMonth.toFixed(1) + " avg contracts/mo", primary: true }),
-        h(MetricCard, { label: "Annual written sales needed", value: fmtResult(calc.monthlyWrittenSalesNeeded * 12), sub: "12 \u00d7 monthly target" }),
-        h(MetricCard, { label: "In-year revenue yield", value: calc.inYearYieldPct.toFixed(1) + "%", sub: "of each written dollar recognized this year" }),
-        h(MetricCard, { label: "Projected in-year revenue", value: fmtResult(calc.projectedInYearRevenue), sub: "from new written sales Jan\u2013Dec" })
+        h(MCard, { label: "Monthly written sales needed", value: fmt(calc.moWritten), sub: calc.contractsPer.toFixed(1)+" avg contracts/mo", primary: true }),
+        h(MCard, { label: "Annual written sales needed", value: fmt(calc.moWritten*12), sub: "12 x monthly target" }),
+        h(MCard, { label: "In-year revenue yield", value: calc.yieldPct.toFixed(1)+"%", sub: "of each written dollar recognized this year" }),
+        h(MCard, { label: "Projected in-year revenue", value: fmt(calc.projInYear), sub: "from new written sales Jan-Dec" })
       ),
       h("div", { className: "metric-cards" },
-        h(MetricCard, { label: "Avg monthly revenue target", value: fmtResult(calc.monthlyRevNeeded), sub: "in-year revenue \u00f7 12" }),
-        h(MetricCard, { label: "Service revenue (annual)", value: fmtResult(calc.serviceRevenue), sub: "excluded from sales target" }),
-        h(MetricCard, { label: "Carryover applied (annual)", value: fmtResult(calc.carryoverRevenue), sub: "from prior year pipeline" })
+        h(MCard, { label: "Avg monthly revenue target", value: fmt(calc.moRevNeeded), sub: "in-year revenue / 12" }),
+        h(MCard, { label: "Service revenue (annual)", value: fmt(calc.svcRev), sub: "excluded from sales target" }),
+        h(MCard, { label: "Carryover applied (annual)", value: fmt(calc.coRev), sub: "from prior year pipeline" })
       ),
-
-      h(Section, { title: "Monthly revenue projection — 36-month horizon" },
+      h(Sec, { title: "Monthly revenue projection — 36-month horizon" },
         h("p", { className: "helper-text" }, "Revenue from new written sales only, assuming consistent monthly volume. Hover bars for detail."),
-        h(MonthlyChart, { data: calc.revenueByMonthArr, currentMonth })
+        h(MonthlyChart, { data: calc.revArr, currentMonth: currentMonth })
       ),
-
-      h(Section, { title: "Revenue recognition by phase type" },
-        h(PhaseBreakdown, { projectTypes, totalMix, monthlyWritten: calc.monthlyWrittenSalesNeeded })
+      h(Sec, { title: "Revenue recognition by phase type" },
+        h(PhaseBreakdown, { projectTypes: projectTypes, totalMix: totalMix, monthlyWritten: calc.moWritten })
       )
+    );
+  }
 
-    })() : null,  // end results IIFE
-
-    /* ── Print-only pages (hidden on screen, visible when printing) ── */
-    h("div", { className: "print-page" },
-
-      /* PAGE 1 — Setup */
-      h("div", { style: { marginBottom: 24 } },
-        h("div", { style: { fontSize: 11, fontWeight: 600, color: "var(--accent)", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 12, borderBottom: "1.5px solid var(--border)", paddingBottom: 6 } }, "Setup"),
-
-        h(Section, { title: "Annual goal" },
-          h("div", { className: "grid-2" },
-            h("div", null, h(Label, null, "Annual revenue goal"), h(DollarInput, { value: annualGoal, onChange: setAnnualGoal })),
-            h("div", null,
-              h(Label, null, "Current month"),
-              h("select", { className: "styled", value: currentMonth, onChange: e => setCurrentMonth(Number(e.target.value)) },
-                ...MONTH_OPTIONS.map(o => h("option", { key: o.value, value: o.value }, o.label))
-              )
-            )
-          )
-        ),
-
-        h(Section, { title: "Service revenue" },
-          h("div", { className: "grid-2" },
-            h("div", null,
-              h(Label, { hint: "As a percentage of the annual revenue goal" }, "Service revenue %"),
-              h(NumInput, { value: servicePct, onChange: v => setServicePct(Math.min(100, Math.max(0, v))), prefix: "%", min: 0, max: 100, clearOnZero: true })
-            ),
-            h("div", { className: "info-box" }, "Service revenue: ", h("strong", null, fmtDisplay(annualGoal * servicePct / 100)))
-          )
-        ),
-
-        h(Section, { title: "Carryover pipeline" },
-          h("div", { className: "grid-2" },
-            h("div", null,
-              h(Label, { hint: "Total contract value of WIP carried from prior year" }, "Carryover pipeline total"),
-              h(DollarInput, { value: carryoverTotal, onChange: setCarryoverTotal })
-            ),
-            h("div", null,
-              h(Label, { hint: "Portion expected to be recognized as revenue this year" }, "% recognized this year"),
-              h(NumInput, { value: carryoverRecPct, onChange: v => setCarryoverRecPct(Math.min(100, Math.max(0, v))), prefix: "%", min: 0, max: 100 })
-            )
-          ),
-          carryoverTotal > 0
-            ? h("div", { className: "info-box mt-8" }, "Carryover revenue applied this year: ", h("strong", null, fmtDisplay(carryoverTotal * carryoverRecPct / 100)))
-            : null
-        ),
-
-        h(Section, { title: "Year-to-date actuals" },
-          h("div", { style: { fontSize: 13, color: "var(--text-muted)", marginBottom: 8 } },
-            "Include YTD actuals: " + (includeYTD ? "Yes" : "No")
-          ),
-          includeYTD ? h("div", { className: "grid-2" },
-            h("div", null, h(Label, null, "YTD written sales contracted"), h(DollarInput, { value: ytdWritten, onChange: setYtdWritten })),
-            h("div", null, h(Label, null, "YTD revenue already recognized"), h(DollarInput, { value: ytdRecognized, onChange: setYtdRecognized }))
-          ) : null
-        )
+  function renderPrintPages() {
+    return h("div", { className: "print-only" },
+      h("div", null,
+        h("div", { className: "print-section-label" }, "Setup"),
+        renderSetup()
       ),
-
-      /* PAGE 2 — Project types */
-      h("div", { className: "print-page-break", style: { marginBottom: 24 } },
-        h("div", { style: { fontSize: 11, fontWeight: 600, color: "var(--accent)", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 12, borderBottom: "1.5px solid var(--border)", paddingBottom: 6 } }, "Project types"),
-        ...projectTypes.map((t, idx) => {
-          const pctSum = t.prewirePct + t.roughPct + t.finalPct;
-          const pctOk = Math.abs(pctSum - 100) < 1;
-          return h(Section, { key: t.id, title: "Project type " + (idx + 1) + " — " + t.name },
+      h("div", { className: "print-page-break" },
+        h("div", { className: "print-section-label" }, "Project types"),
+        projectTypes.map(function(t, idx) {
+          return h(Sec, { key: t.id, title: "Project type "+(idx+1)+" — "+t.name },
             h("div", { className: "grid-3 mb-12" },
-              h("div", null, h(Label, null, "Avg contract value"), h(DollarInput, { value: t.avgValue, onChange: v => updateType(t.id, "avgValue", v) })),
-              h("div", null, h(Label, null, "Duration (months)"), h(NumInput, { value: t.duration, onChange: v => updateType(t.id, "duration", v), min: 0.1, max: 36, allowDecimal: true })),
-              h("div", null, h(Label, null, "Sales mix %"), h(NumInput, { value: t.mixPct, onChange: v => updateType(t.id, "mixPct", v), prefix: "%", min: 0, max: 100 }))
+              h("div", null, h(Lbl, null, "Avg contract value"), h(DollarInput, { value: t.avgValue, onChange: function(v){updateType(t.id,"avgValue",v);} })),
+              h("div", null, h(Lbl, null, "Duration (months)"), h(NumInput, { value: t.duration, onChange: function(v){updateType(t.id,"duration",v);}, min: 0.1, max: 36, allowDecimal: true })),
+              h("div", null, h(Lbl, null, "Sales mix %"), h(NumInput, { value: t.mixPct, onChange: function(v){updateType(t.id,"mixPct",v);}, prefix: "%", min: 0, max: 100 }))
             ),
             h("div", { className: "sub-panel" },
               h("div", { className: "sub-panel-title" }, "Phase schedule"),
               h("div", { className: "grid-3" },
-                ...[
+                [
                   { label: "Prewire",  mf: "prewireMonth", pf: "prewirePct", color: COLORS.prewire },
                   { label: "Rough-in", mf: "roughMonth",   pf: "roughPct",   color: COLORS.rough },
-                  { label: "Final",    mf: "finalMonth",   pf: "finalPct",   color: COLORS.final },
-                ].map(ph => h("div", { key: ph.label },
-                  h("div", { style: { display: "flex", alignItems: "center", marginBottom: 4 } },
-                    h("span", { className: "phase-dot", style: { background: ph.color } }),
-                    h("span", { style: { fontSize: 12, fontWeight: 600, color: "var(--text-muted)" } }, ph.label)
-                  ),
-                  h("div", { style: { fontSize: 13 } },
-                    "Month " + t[ph.mf] + " — " + t[ph.pf] + "%"
-                  )
-                ))
-              ),
-              !pctOk ? h("div", { className: "pct-err" }, "Phase percentages sum to " + pctSum + "% — must equal 100%") : null
+                  { label: "Final",    mf: "finalMonth",   pf: "finalPct",   color: COLORS.final }
+                ].map(function(ph) {
+                  return h("div", { key: ph.label },
+                    h("div", { style: { display: "flex", alignItems: "center", marginBottom: 4 } },
+                      h("span", { className: "phase-dot", style: { background: ph.color } }),
+                      h("span", { style: { fontSize: 12, fontWeight: 600, color: "var(--text-muted)" } }, ph.label)
+                    ),
+                    h("div", { style: { fontSize: 13 } }, "Month "+t[ph.mf]+" — "+t[ph.pf]+"%")
+                  );
+                })
+              )
             )
           );
         })
       ),
-
-      /* PAGE 3 — Results */
       calc ? h("div", { className: "print-page-break" },
-        h("div", { style: { fontSize: 11, fontWeight: 600, color: "var(--accent)", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 12, borderBottom: "1.5px solid var(--border)", paddingBottom: 6 } }, "Results"),
-
-        h(Section, { title: "Revenue goal breakdown" },
+        h("div", { className: "print-section-label" }, "Results"),
+        h(Sec, { title: "Revenue goal breakdown" },
           h("div", { style: { maxWidth: 500 } },
-            h(DeductionRow, { label: "Annual revenue goal", value: fmtResult(annualGoal), bold: true }),
-            h(DeductionRow, { label: "Service revenue deducted (" + servicePct + "% of goal)", value: "− " + fmtResult(calc.serviceRevenue), color: "var(--text-muted)" }),
-            h(DeductionRow, { label: "Carryover pipeline recognized (" + carryoverRecPct + "% of " + fmtResult(carryoverTotal) + ")", value: "− " + fmtResult(calc.carryoverRevenue), color: "var(--text-muted)" }),
-            includeYTD && ytdRecognized > 0
-              ? h(DeductionRow, { label: "YTD revenue already recognized", value: "− " + fmtResult(calc.ytdRec), color: "var(--text-muted)" })
-              : null,
+            h(DRow, { label: "Annual revenue goal", value: fmt(annualGoal), bold: true }),
+            h(DRow, { label: "Service revenue deducted ("+servicePct+"% of goal)", value: "- "+fmt(calc.svcRev), color: "var(--text-muted)" }),
+            h(DRow, { label: "Carryover pipeline recognized ("+carryoverRecPct+"% of "+fmt(carryoverTotal)+")", value: "- "+fmt(calc.coRev), color: "var(--text-muted)" }),
+            includeYTD && ytdRecognized>0 ? h(DRow, { label: "YTD revenue already recognized", value: "- "+fmt(calc.ytdRec), color: "var(--text-muted)" }) : null,
             h("div", { className: "deduction-row total-row" },
               h("span", { style: { fontWeight: 600 } }, "Revenue needed from new written sales"),
-              h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmtResult(calc.revenueNeededFromSales))
+              h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmt(calc.needFromSales))
             )
           )
         ),
-
         h("div", { className: "metric-cards" },
-          h(MetricCard, { label: "Monthly written sales needed", value: fmtResult(calc.monthlyWrittenSalesNeeded), sub: calc.contractsPerMonth.toFixed(1) + " avg contracts/mo", primary: true }),
-          h(MetricCard, { label: "Annual written sales needed", value: fmtResult(calc.monthlyWrittenSalesNeeded * 12), sub: "12 \u00d7 monthly target" }),
-          h(MetricCard, { label: "In-year revenue yield", value: calc.inYearYieldPct.toFixed(1) + "%", sub: "of each written dollar recognized this year" }),
-          h(MetricCard, { label: "Projected in-year revenue", value: fmtResult(calc.projectedInYearRevenue), sub: "from new written sales Jan\u2013Dec" })
+          h(MCard, { label: "Monthly written sales needed", value: fmt(calc.moWritten), sub: calc.contractsPer.toFixed(1)+" avg contracts/mo", primary: true }),
+          h(MCard, { label: "Annual written sales needed", value: fmt(calc.moWritten*12), sub: "12 x monthly target" }),
+          h(MCard, { label: "In-year revenue yield", value: calc.yieldPct.toFixed(1)+"%", sub: "of each written dollar recognized this year" }),
+          h(MCard, { label: "Projected in-year revenue", value: fmt(calc.projInYear), sub: "from new written sales Jan-Dec" })
         ),
         h("div", { className: "metric-cards" },
-          h(MetricCard, { label: "Avg monthly revenue target", value: fmtResult(calc.monthlyRevNeeded), sub: "in-year revenue \u00f7 12" }),
-          h(MetricCard, { label: "Service revenue (annual)", value: fmtResult(calc.serviceRevenue), sub: "excluded from sales target" }),
-          h(MetricCard, { label: "Carryover applied (annual)", value: fmtResult(calc.carryoverRevenue), sub: "from prior year pipeline" })
+          h(MCard, { label: "Avg monthly revenue target", value: fmt(calc.moRevNeeded), sub: "in-year revenue / 12" }),
+          h(MCard, { label: "Service revenue (annual)", value: fmt(calc.svcRev), sub: "excluded from sales target" }),
+          h(MCard, { label: "Carryover applied (annual)", value: fmt(calc.coRev), sub: "from prior year pipeline" })
         ),
-
-        h(Section, { title: "Monthly revenue projection — 36-month horizon" },
-          h(MonthlyChart, { data: calc.revenueByMonthArr, currentMonth })
+        h(Sec, { title: "Monthly revenue projection — 36-month horizon" },
+          h(MonthlyChart, { data: calc.revArr, currentMonth: currentMonth })
         ),
-
-        h(Section, { title: "Revenue recognition by phase type" },
-          h(PhaseBreakdown, { projectTypes, totalMix, monthlyWritten: calc.monthlyWrittenSalesNeeded })
+        h(Sec, { title: "Revenue recognition by phase type" },
+          h(PhaseBreakdown, { projectTypes: projectTypes, totalMix: totalMix, monthlyWritten: calc.moWritten })
         )
       ) : null
-    )
+    );
+  }
 
-  ); // end App return
+  return h("div", { className: "app" },
+    h("div", { className: "app-header" },
+      h("div", { className: "app-header-left" },
+        h("img", { src: LOGO_B64, className: "app-logo", alt: "GA logo" }),
+        h("div", null,
+          h("div", { className: "app-title" }, "Revenue Recognition Calculator"),
+          h("div", { className: "app-sub" }, "Custom integration services \u2014 written sales planning tool")
+        )
+      ),
+      activeTab === "setup" ? h("button", { className: "btn btn-reset", onClick: handleReset }, "\u21ba Reset all") : null
+    ),
+    h("div", { className: "tabs screen-only" },
+      tabs.map(function(t) {
+        return h("button", { key: t.id, className: "tab-btn"+(activeTab===t.id?" active":""), onClick: function(){setActiveTab(t.id);} }, t.label);
+      })
+    ),
+    activeTab === "setup"   ? h("div", { className: "screen-only" }, renderSetup())   : null,
+    activeTab === "projects"? h("div", { className: "screen-only" }, renderProjects()) : null,
+    activeTab === "results" ? h("div", { className: "screen-only" }, renderResults())  : null,
+    renderPrintPages()
+  );
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+var root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(h(App, null));
 </script>
 </body>
