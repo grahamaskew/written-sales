@@ -4,90 +4,123 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Revenue Recognition Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
+  :root {
+    --accent:       #798aa9;
+    --accent-light: #e8ecf2;
+    --accent-mid:   #b0bcce;
+    --accent-dark:  #4f6080;
+    --text-primary: #1c2333;
+    --text-muted:   #6b7a90;
+    --text-faint:   #9aaabb;
+    --bg-page:      #f2f4f7;
+    --bg-card:      #ffffff;
+    --bg-subtle:    #eef0f4;
+    --border:       #dde1e8;
+    --border-light: #eaedf2;
+    --error:        #c94a2e;
+    --error-light:  #fdf0ee;
+    --error-border: #f0c4bc;
+  }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; background: #f5f5f3; color: #1a1a18; min-height: 100vh; }
+  body { font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 15px; background: var(--bg-page); color: var(--text-primary); min-height: 100vh; -webkit-font-smoothing: antialiased; }
   .app { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
-  .app-title { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
-  .app-sub { font-size: 14px; color: #6b6b68; margin-bottom: 1.5rem; }
+
+  /* header */
+  .app-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.75rem; gap: 12px; }
+  .app-title { font-size: 21px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; letter-spacing: -0.2px; }
+  .app-sub { font-size: 13px; color: var(--text-muted); }
 
   /* tabs */
-  .tabs { display: flex; gap: 4px; border-bottom: 1px solid #ddd; margin-bottom: 1.25rem; }
-  .tab-btn { background: none; border: none; padding: 8px 18px; font-size: 14px; cursor: pointer; color: #6b6b68; border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: inherit; transition: color .15s; }
-  .tab-btn.active { color: #1a1a18; font-weight: 600; border-bottom-color: #1a1a18; }
-  .tab-btn:hover { color: #1a1a18; }
+  .tabs { display: flex; gap: 2px; border-bottom: 1.5px solid var(--border); margin-bottom: 1.25rem; }
+  .tab-btn { background: none; border: none; padding: 8px 20px; font-size: 13.5px; font-weight: 400; cursor: pointer; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1.5px; font-family: inherit; transition: color .15s; letter-spacing: 0.01em; }
+  .tab-btn.active { color: var(--accent-dark); font-weight: 600; border-bottom-color: var(--accent); }
+  .tab-btn:hover { color: var(--text-primary); }
 
   /* section card */
-  .section { background: #fff; border: 1px solid #e5e5e2; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
-  .section-title { font-size: 11px; font-weight: 600; color: #8a8a87; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 1rem; }
+  .section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+  .section-title { font-size: 10.5px; font-weight: 600; color: var(--accent); letter-spacing: .09em; text-transform: uppercase; margin-bottom: 1rem; }
 
-  /* grid helpers */
+  /* grids */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
-  .flex-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 1rem; }
 
   /* label */
-  .lbl { font-size: 12px; color: #6b6b68; margin-bottom: 4px; }
-  .lbl-hint { font-size: 11px; color: #aaa; margin-top: 1px; }
+  .lbl { font-size: 12px; color: var(--text-muted); margin-bottom: 5px; font-weight: 400; }
+  .lbl-hint { font-size: 11px; color: var(--text-faint); margin-top: 1px; }
 
   /* inputs */
-  .input-wrap { display: flex; align-items: center; border: 1px solid #d0d0ce; border-radius: 8px; overflow: hidden; background: #fff; }
-  .input-prefix { padding: 0 9px; font-size: 13px; color: #8a8a87; background: #f5f5f3; border-right: 1px solid #e0e0de; white-space: nowrap; height: 100%; display: flex; align-items: center; }
-  .input-wrap input[type=number] { border: none; background: transparent; padding: 7px 10px; width: 100%; font-size: 14px; color: #1a1a18; outline: none; font-family: inherit; }
-  .input-wrap input[type=number]::-webkit-inner-spin-button, .input-wrap input[type=number]::-webkit-outer-spin-button { opacity: .5; }
-  select.styled { width: 100%; padding: 7px 10px; font-size: 14px; border: 1px solid #d0d0ce; border-radius: 8px; background: #fff; color: #1a1a18; font-family: inherit; outline: none; cursor: pointer; }
-  input[type=text].styled { border: none; border-bottom: 1px solid #d0d0ce; background: transparent; font-size: 15px; font-weight: 600; color: #1a1a18; padding: 3px 0; outline: none; width: 100%; font-family: inherit; }
-  input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: #378ADD; }
+  .input-wrap { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 7px; overflow: hidden; background: var(--bg-card); transition: border-color .15s; }
+  .input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(121,138,169,.12); }
+  .input-prefix { padding: 0 9px; font-size: 13px; color: var(--accent); background: var(--accent-light); border-right: 1px solid var(--border-light); white-space: nowrap; height: 100%; display: flex; align-items: center; flex-shrink: 0; font-weight: 500; }
+  .input-wrap input { border: none; background: transparent; padding: 7px 10px; width: 100%; font-size: 14px; color: var(--text-primary); outline: none; font-family: inherit; }
+  .input-wrap input[type=number]::-webkit-inner-spin-button,
+  .input-wrap input[type=number]::-webkit-outer-spin-button { opacity: .4; }
+
+  select.styled { width: 100%; padding: 7px 10px; font-size: 14px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg-card); color: var(--text-primary); font-family: inherit; outline: none; cursor: pointer; transition: border-color .15s; }
+  select.styled:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(121,138,169,.12); }
+  input[type=text].styled { border: none; border-bottom: 1.5px solid var(--border); background: transparent; font-size: 15px; font-weight: 600; color: var(--text-primary); padding: 3px 0; outline: none; width: 100%; font-family: inherit; transition: border-color .15s; }
+  input[type=text].styled:focus { border-bottom-color: var(--accent); }
+  input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--accent); }
 
   /* metric cards */
-  .metric-cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 1rem; }
-  .metric-card { background: #f0f0ed; border-radius: 8px; padding: 1rem; flex: 1; min-width: 140px; }
-  .metric-card .mc-label { font-size: 12px; color: #6b6b68; margin-bottom: 4px; }
-  .metric-card .mc-value { font-size: 22px; font-weight: 600; }
-  .metric-card .mc-sub { font-size: 12px; color: #6b6b68; margin-top: 2px; }
+  .metric-cards { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .metric-card { background: var(--accent-light); border: 1px solid var(--border); border-radius: 9px; padding: 1rem; flex: 1; min-width: 140px; }
+  .metric-card.primary { background: var(--accent); border-color: var(--accent); }
+  .metric-card.primary .mc-label { color: rgba(255,255,255,.75); }
+  .metric-card.primary .mc-value { color: #ffffff; }
+  .metric-card.primary .mc-sub { color: rgba(255,255,255,.65); }
+  .metric-card .mc-label { font-size: 11.5px; color: var(--text-muted); margin-bottom: 5px; font-weight: 400; }
+  .metric-card .mc-value { font-size: 21px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.3px; }
+  .metric-card .mc-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; }
 
   /* deduction table */
-  .deduction-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px; }
-  .deduction-row.total-row { border-bottom: none; padding-top: 10px; font-size: 14px; }
+  .deduction-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border-light); font-size: 13px; }
+  .deduction-row.total-row { border-bottom: none; padding-top: 12px; font-size: 14px; }
 
   /* info box */
-  .info-box { background: #f0f0ed; border-radius: 8px; padding: 8px 12px; font-size: 13px; margin-top: 10px; color: #6b6b68; }
-  .info-box strong { color: #1a1a18; }
+  .info-box { background: var(--accent-light); border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px; font-size: 13px; margin-top: 10px; color: var(--text-muted); }
+  .info-box strong { color: var(--accent-dark); }
 
   /* sub-panel */
-  .sub-panel { background: #f5f5f3; border-radius: 8px; padding: 12px; margin-top: 4px; }
-  .sub-panel-title { font-size: 12px; font-weight: 600; color: #6b6b68; margin-bottom: 10px; }
+  .sub-panel { background: var(--bg-subtle); border-radius: 8px; padding: 12px; margin-top: 6px; border: 1px solid var(--border-light); }
+  .sub-panel-title { font-size: 11.5px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; }
 
   /* phase dot */
-  .phase-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 5px; }
+  .phase-dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; margin-right: 5px; flex-shrink: 0; }
 
-  /* button */
-  .btn { border: 1px solid #d0d0ce; background: transparent; border-radius: 8px; padding: 7px 16px; font-size: 14px; cursor: pointer; color: #1a1a18; font-family: inherit; transition: background .12s; }
-  .btn:hover { background: #f0f0ed; }
-  .btn-remove { font-size: 12px; color: #8a8a87; padding: 4px 10px; }
+  /* buttons */
+  .btn { border: 1px solid var(--border); background: transparent; border-radius: 7px; padding: 7px 15px; font-size: 13.5px; cursor: pointer; color: var(--text-primary); font-family: inherit; transition: background .12s, border-color .12s; font-weight: 400; }
+  .btn:hover { background: var(--bg-subtle); border-color: var(--accent-mid); }
+  .btn-remove { font-size: 12px; color: var(--text-muted); padding: 4px 10px; }
+  .btn-reset { font-size: 13px; color: var(--error); border-color: var(--error-border); padding: 6px 14px; white-space: nowrap; flex-shrink: 0; font-weight: 500; }
+  .btn-reset:hover { background: var(--error-light); border-color: #e0a098; }
+
   .mix-status { font-size: 13px; margin-left: auto; }
-  .mix-ok { color: #6b6b68; }
-  .mix-err { color: #D85A30; }
-  .pct-err { font-size: 12px; color: #D85A30; margin-top: 8px; }
+  .mix-ok { color: var(--text-muted); }
+  .mix-err { color: var(--error); }
+  .pct-err { font-size: 12px; color: var(--error); margin-top: 8px; }
 
   /* chart */
   .chart-wrap { overflow-x: auto; }
-  .chart-legend { display: flex; gap: 16px; font-size: 12px; color: #6b6b68; margin-top: 6px; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .chart-legend { display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); margin-top: 8px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
   .legend-swatch { width: 10px; height: 10px; border-radius: 2px; }
   .legend-line { width: 16px; height: 1px; }
 
   /* table */
   .phase-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
-  .phase-table th { padding: 6px 8px; font-weight: 600; font-size: 12px; border-bottom: 1px solid #d0d0ce; }
-  .phase-table td { padding: 8px 8px; border-bottom: 1px solid #eee; }
-  .phase-table tr.total-row td { border-top: 1px solid #d0d0ce; border-bottom: none; background: #f5f5f3; font-weight: 600; }
+  .phase-table th { padding: 6px 8px; font-weight: 600; font-size: 11.5px; border-bottom: 1.5px solid var(--border); color: var(--text-muted); }
+  .phase-table td { padding: 8px 8px; border-bottom: 1px solid var(--border-light); }
+  .phase-table tr.total-row td { border-top: 1.5px solid var(--border); border-bottom: none; background: var(--accent-light); font-weight: 600; color: var(--accent-dark); }
   .text-right { text-align: right; }
-  .text-muted { color: #6b6b68; }
-  .text-accent { color: #378ADD; }
+  .text-muted { color: var(--text-muted); }
 
-  .notice { padding: 2rem; text-align: center; color: #6b6b68; font-size: 14px; }
-  .helper-text { font-size: 13px; color: #6b6b68; margin-bottom: .75rem; }
+  .notice { padding: 2rem; text-align: center; color: var(--text-muted); font-size: 14px; }
+  .helper-text { font-size: 13px; color: var(--text-muted); margin-bottom: .75rem; line-height: 1.5; }
   .mt-8 { margin-top: 8px; }
   .mb-12 { margin-bottom: 12px; }
   .name-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; }
@@ -98,6 +131,7 @@
     .grid-2 { grid-template-columns: 1fr; }
     .grid-3 { grid-template-columns: 1fr; }
     .metric-card { min-width: 120px; }
+    .app-header { flex-direction: column; }
   }
 </style>
 </head>
@@ -107,25 +141,100 @@
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script>
-const { useState, useMemo, createElement: h, Fragment } = React;
+const { useState, useMemo, useRef, createElement: h, Fragment } = React;
 
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const COLORS = { prewire: "#378ADD", rough: "#1D9E75", final: "#D85A30" };
+const COLORS = { prewire: "#798aa9", rough: "#1D9E75", final: "#c47a3a" };
+
+const DEFAULT_STATE = {
+  annualGoal: 3000000,
+  currentMonth: new Date().getMonth() + 1,
+  includeYTD: true,
+  ytdWritten: 0,
+  ytdRecognized: 0,
+  carryoverTotal: 0,
+  carryoverRecPct: 50,
+  servicePct: 0,
+};
 
 const DEFAULT_TYPES = [
   { id: 1, name: "Standard Residential", avgValue: 45000, duration: 6, prewireMonth: 1, roughMonth: 3, finalMonth: 6, prewirePct: 20, roughPct: 40, finalPct: 40, mixPct: 50 },
   { id: 2, name: "Large Custom Home",    avgValue: 120000, duration: 10, prewireMonth: 2, roughMonth: 5, finalMonth: 10, prewirePct: 25, roughPct: 35, finalPct: 40, mixPct: 30 },
 ];
 
-function fmt(n) { return "$" + Math.round(n).toLocaleString(); }
+function fmtDisplay(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
+function fmtResult(n)  { return "$" + Math.round(n).toLocaleString("en-US"); }
 function pct(n) { return Math.round(n) + "%"; }
+function parseDollar(str) {
+  const n = parseFloat(String(str).replace(/[^0-9.]/g, ""));
+  return isNaN(n) ? 0 : n;
+}
 
-function NumInput({ value, onChange, prefix, min, max, step }) {
+function DollarInput({ value, onChange }) {
+  const [focused, setFocused] = useState(false);
+  const [raw, setRaw] = useState(value === 0 ? "" : String(Math.round(value)));
+  const prevValue = useRef(value);
+
+  if (!focused && value !== prevValue.current) {
+    prevValue.current = value;
+    setRaw(value === 0 ? "" : String(Math.round(value)));
+  }
+
+  const displayVal = focused ? raw : (value === 0 ? "" : Math.round(value).toLocaleString("en-US"));
+
+  return h("div", { className: "input-wrap" },
+    h("span", { className: "input-prefix" }, "$"),
+    h("input", {
+      type: "text",
+      inputMode: "numeric",
+      value: displayVal,
+      placeholder: "0",
+      onFocus: () => {
+        setFocused(true);
+        setRaw(value === 0 ? "" : String(Math.round(value)));
+      },
+      onChange: e => {
+        const cleaned = e.target.value.replace(/[^0-9]/g, "");
+        setRaw(cleaned);
+        const n = cleaned === "" ? 0 : parseInt(cleaned, 10);
+        prevValue.current = n;
+        onChange(n);
+      },
+      onBlur: () => {
+        setFocused(false);
+        const n = parseDollar(raw);
+        prevValue.current = n;
+        onChange(n);
+        setRaw(n === 0 ? "" : String(Math.round(n)));
+      }
+    })
+  );
+}
+
+function NumInput({ value, onChange, prefix, min, max, step, clearOnZero, allowDecimal }) {
+  const [focused, setFocused] = useState(false);
+  const effectiveStep = allowDecimal ? 0.1 : (step || 1);
+  const displayVal = (focused || !(value === 0 && clearOnZero)) ? value : "";
+
   return h("div", { className: "input-wrap" },
     prefix ? h("span", { className: "input-prefix" }, prefix) : null,
     h("input", {
-      type: "number", value, min, max, step: step || 1,
-      onChange: e => onChange(Number(e.target.value))
+      type: "number",
+      value: displayVal,
+      min, max,
+      step: effectiveStep,
+      placeholder: clearOnZero ? "0" : undefined,
+      onFocus: e => {
+        setFocused(true);
+        if (clearOnZero && value === 0) e.target.value = "";
+      },
+      onChange: e => {
+        const raw = e.target.value;
+        if (raw === "" || raw === "-") { onChange(0); return; }
+        const n = allowDecimal ? parseFloat(raw) : parseInt(raw, 10);
+        if (!isNaN(n)) onChange(n);
+      },
+      onBlur: () => setFocused(false)
     })
   );
 }
@@ -144,18 +253,18 @@ function Section({ title, children }) {
   );
 }
 
-function MetricCard({ label, value, sub, accent }) {
-  return h("div", { className: "metric-card" },
+function MetricCard({ label, value, sub, primary }) {
+  return h("div", { className: "metric-card" + (primary ? " primary" : "") },
     h("div", { className: "mc-label" }, label),
-    h("div", { className: "mc-value", style: { color: accent || "#1a1a18" } }, value),
+    h("div", { className: "mc-value" }, value),
     sub ? h("div", { className: "mc-sub" }, sub) : null
   );
 }
 
 function DeductionRow({ label, value, color, bold }) {
   return h("div", { className: "deduction-row" },
-    h("span", { style: { color: bold ? "#1a1a18" : "#6b6b68", fontWeight: bold ? 600 : 400 } }, label),
-    h("span", { style: { color: color || "#1a1a18", fontWeight: bold ? 600 : 400 } }, value)
+    h("span", { style: { color: bold ? "var(--text-primary)" : "var(--text-muted)", fontWeight: bold ? 600 : 400 } }, label),
+    h("span", { style: { color: color || "var(--text-primary)", fontWeight: bold ? 600 : 400 } }, value)
   );
 }
 
@@ -173,42 +282,34 @@ function MonthlyChart({ data, currentMonth, monthlyTarget }) {
         viewBox: "0 0 " + Math.max(totalW, 100) + " " + (chartH + 30),
         style: { width: "100%", minWidth: 600, display: "block" }
       },
-        goalY > 0 && goalY < chartH
-          ? h("line", { x1: 0, y1: goalY, x2: totalW, y2: goalY, stroke: "#D85A30", strokeWidth: 0.5, strokeDasharray: "3,2" })
-          : null,
-        goalY > 0 && goalY < chartH
-          ? h("text", { x: 2, y: goalY - 2, fontSize: 4, fill: "#D85A30" }, "Monthly target")
-          : null,
+        goalY > 0 && goalY < chartH ? h("line", { x1: 0, y1: goalY, x2: totalW, y2: goalY, stroke: "#c47a3a", strokeWidth: 0.6, strokeDasharray: "3,2" }) : null,
+        goalY > 0 && goalY < chartH ? h("text", { x: 2, y: goalY - 2, fontSize: 4, fill: "#c47a3a" }, "Monthly target") : null,
         ...data.map((d, i) => {
           const barH = Math.max(1, (d.revenue / maxRev) * chartH);
           const x = i * 10;
           const y = chartH - barH;
           const isPast = d.month < currentMonth;
           const isCurrentYear = d.month <= 12;
-          const fill = isPast ? "#B4B2A9" : isCurrentYear ? "#378ADD" : "#B5D4F4";
+          const fill = isPast ? "#c4ccd8" : isCurrentYear ? "#798aa9" : "#b0bcce";
           const label = d.month <= 12
             ? MONTH_NAMES[(d.month - 1) % 12]
             : "Y" + Math.ceil(d.month / 12) + " M" + (((d.month - 1) % 12) + 1);
-          return h("g", {
-            key: i,
-            onMouseEnter: () => setHovered(i),
-            onMouseLeave: () => setHovered(null)
-          },
+          return h("g", { key: i, onMouseEnter: () => setHovered(i), onMouseLeave: () => setHovered(null) },
             h("rect", { x: x + 0.5, y, width: barW, height: barH, fill, rx: 1 }),
-            i % 3 === 0 ? h("text", { x: x + barW / 2, y: chartH + 12, textAnchor: "middle", fontSize: 4, fill: "#888780" }, label) : null,
+            i % 3 === 0 ? h("text", { x: x + barW / 2, y: chartH + 12, textAnchor: "middle", fontSize: 4, fill: "#9aaabb" }, label) : null,
             hovered === i ? h("g", null,
-              h("rect", { x: Math.min(x, totalW - 60), y: Math.max(0, y - 22), width: 55, height: 16, fill: "#fff", stroke: "#ccc", strokeWidth: 0.5, rx: 2 }),
-              h("text", { x: Math.min(x, totalW - 60) + 27, y: Math.max(0, y - 22) + 10, textAnchor: "middle", fontSize: 4.5, fill: "#1a1a18", fontWeight: 500 }, fmt(d.revenue))
+              h("rect", { x: Math.min(x, totalW - 70), y: Math.max(0, y - 22), width: 65, height: 16, fill: "#fff", stroke: "#dde1e8", strokeWidth: 0.5, rx: 3 }),
+              h("text", { x: Math.min(x, totalW - 70) + 32, y: Math.max(0, y - 22) + 10, textAnchor: "middle", fontSize: 4.5, fill: "#1c2333", fontWeight: 600 }, fmtResult(d.revenue))
             ) : null
           );
         })
       )
     ),
     h("div", { className: "chart-legend" },
-      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#B4B2A9" } }), "Past months"),
-      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#378ADD" } }), "Current year"),
-      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#B5D4F4" } }), "Future years"),
-      h("span", { className: "legend-item" }, h("span", { className: "legend-line", style: { background: "#D85A30" } }), "Monthly target")
+      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#c4ccd8" } }), "Past months"),
+      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#798aa9" } }), "Current year"),
+      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#b0bcce" } }), "Future years"),
+      h("span", { className: "legend-item" }, h("span", { className: "legend-line", style: { background: "#c47a3a" } }), "Monthly target")
     )
   );
 }
@@ -240,19 +341,19 @@ function PhaseBreakdown({ projectTypes, totalMix, monthlyWritten }) {
           h("tr", { key: i },
             h("td", { style: { fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, r.name),
             h("td", { className: "text-right text-muted" }, pct(r.mix * 100)),
-            h("td", { className: "text-right" }, fmt(r.pw)),
-            h("td", { className: "text-right" }, fmt(r.ro)),
-            h("td", { className: "text-right" }, fmt(r.fi)),
-            h("td", { className: "text-right", style: { fontWeight: 600 } }, fmt(r.tot))
+            h("td", { className: "text-right" }, fmtResult(r.pw)),
+            h("td", { className: "text-right" }, fmtResult(r.ro)),
+            h("td", { className: "text-right" }, fmtResult(r.fi)),
+            h("td", { className: "text-right", style: { fontWeight: 600 } }, fmtResult(r.tot))
           )
         ),
         h("tr", { className: "total-row" },
           h("td", null, "Total"),
           h("td", { className: "text-right" }, "100%"),
-          h("td", { className: "text-right" }, fmt(rows.reduce((s, r) => s + r.pw, 0))),
-          h("td", { className: "text-right" }, fmt(rows.reduce((s, r) => s + r.ro, 0))),
-          h("td", { className: "text-right" }, fmt(rows.reduce((s, r) => s + r.fi, 0))),
-          h("td", { className: "text-right" }, fmt(rows.reduce((s, r) => s + r.tot, 0)))
+          h("td", { className: "text-right" }, fmtResult(rows.reduce((s, r) => s + r.pw, 0))),
+          h("td", { className: "text-right" }, fmtResult(rows.reduce((s, r) => s + r.ro, 0))),
+          h("td", { className: "text-right" }, fmtResult(rows.reduce((s, r) => s + r.fi, 0))),
+          h("td", { className: "text-right" }, fmtResult(rows.reduce((s, r) => s + r.tot, 0)))
         )
       )
     )
@@ -260,17 +361,31 @@ function PhaseBreakdown({ projectTypes, totalMix, monthlyWritten }) {
 }
 
 function App() {
-  const [annualGoal, setAnnualGoal] = useState(3000000);
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
-  const [includeYTD, setIncludeYTD] = useState(true);
-  const [ytdWritten, setYtdWritten] = useState(0);
-  const [ytdRecognized, setYtdRecognized] = useState(0);
-  const [carryoverTotal, setCarryoverTotal] = useState(0);
-  const [carryoverRecPct, setCarryoverRecPct] = useState(50);
-  const [servicePct, setServicePct] = useState(0);
-  const [projectTypes, setProjectTypes] = useState(DEFAULT_TYPES);
-  const [nextId, setNextId] = useState(3);
-  const [activeTab, setActiveTab] = useState("setup");
+  const [annualGoal,      setAnnualGoal]      = useState(DEFAULT_STATE.annualGoal);
+  const [currentMonth,    setCurrentMonth]    = useState(DEFAULT_STATE.currentMonth);
+  const [includeYTD,      setIncludeYTD]      = useState(DEFAULT_STATE.includeYTD);
+  const [ytdWritten,      setYtdWritten]      = useState(DEFAULT_STATE.ytdWritten);
+  const [ytdRecognized,   setYtdRecognized]   = useState(DEFAULT_STATE.ytdRecognized);
+  const [carryoverTotal,  setCarryoverTotal]  = useState(DEFAULT_STATE.carryoverTotal);
+  const [carryoverRecPct, setCarryoverRecPct] = useState(DEFAULT_STATE.carryoverRecPct);
+  const [servicePct,      setServicePct]      = useState(DEFAULT_STATE.servicePct);
+  const [projectTypes,    setProjectTypes]    = useState(DEFAULT_TYPES);
+  const [nextId,          setNextId]          = useState(3);
+  const [activeTab,       setActiveTab]       = useState("setup");
+
+  function handleReset() {
+    setAnnualGoal(DEFAULT_STATE.annualGoal);
+    setCurrentMonth(DEFAULT_STATE.currentMonth);
+    setIncludeYTD(DEFAULT_STATE.includeYTD);
+    setYtdWritten(DEFAULT_STATE.ytdWritten);
+    setYtdRecognized(DEFAULT_STATE.ytdRecognized);
+    setCarryoverTotal(DEFAULT_STATE.carryoverTotal);
+    setCarryoverRecPct(DEFAULT_STATE.carryoverRecPct);
+    setServicePct(DEFAULT_STATE.servicePct);
+    setProjectTypes(DEFAULT_TYPES.map(t => Object.assign({}, t)));
+    setNextId(3);
+    setActiveTab("setup");
+  }
 
   function addType() {
     if (projectTypes.length >= 5) return;
@@ -282,7 +397,9 @@ function App() {
     setNextId(n => n + 1);
   }
   function removeType(id) { setProjectTypes(prev => prev.filter(t => t.id !== id)); }
-  function updateType(id, field, val) { setProjectTypes(prev => prev.map(t => t.id === id ? Object.assign({}, t, { [field]: val }) : t)); }
+  function updateType(id, field, val) {
+    setProjectTypes(prev => prev.map(t => t.id === id ? Object.assign({}, t, { [field]: val }) : t));
+  }
 
   const totalMix = projectTypes.reduce((s, t) => s + t.mixPct, 0);
 
@@ -300,16 +417,18 @@ function App() {
 
     function revPct(offset, t) {
       let r = 0;
-      if (offset === t.prewireMonth) r += t.prewirePct / 100;
-      if (offset === t.roughMonth)   r += t.roughPct / 100;
-      if (offset === t.finalMonth)   r += t.finalPct / 100;
+      if (Math.round(offset * 10) === Math.round(t.prewireMonth * 10)) r += t.prewirePct / 100;
+      if (Math.round(offset * 10) === Math.round(t.roughMonth   * 10)) r += t.roughPct   / 100;
+      if (Math.round(offset * 10) === Math.round(t.finalMonth   * 10)) r += t.finalPct   / 100;
       return r;
     }
     function buildSched(wm, t, cv) {
       const out = {};
-      for (let o = 1; o <= t.duration; o++) {
-        const rev = revPct(o, t) * cv;
-        if (rev > 0) { const m = wm + o - 1; out[m] = (out[m] || 0) + rev; }
+      const steps = Math.round(t.duration * 10);
+      for (let s = 1; s <= steps; s++) {
+        const offset = Math.round(s) / 10;
+        const rev = revPct(offset, t) * cv;
+        if (rev > 0) { const m = Math.ceil(wm + offset - 1); out[m] = (out[m] || 0) + rev; }
       }
       return out;
     }
@@ -322,7 +441,6 @@ function App() {
 
     const revByMonth = {};
     for (let i = 1; i <= 36; i++) revByMonth[i] = 0;
-
     for (let wm = 1; wm <= 36; wm++) {
       norm.forEach(t => {
         const contracts = (monthlyWrittenSalesNeeded * t.normMix) / t.avgValue;
@@ -339,7 +457,6 @@ function App() {
         });
       }
     }
-
     return {
       monthlyWrittenSalesNeeded,
       contractsPerMonth: monthlyWrittenSalesNeeded / weightedAvgValue,
@@ -355,8 +472,16 @@ function App() {
   const tabs = [{ id: "setup", label: "Setup" }, { id: "projects", label: "Project types" }, { id: "results", label: "Results" }];
 
   return h("div", { className: "app" },
-    h("div", { className: "app-title" }, "Revenue Recognition Calculator"),
-    h("div", { className: "app-sub" }, "Custom integration services — written sales planning tool"),
+
+    h("div", { className: "app-header" },
+      h("div", null,
+        h("div", { className: "app-title" }, "Revenue Recognition Calculator"),
+        h("div", { className: "app-sub" }, "Custom integration services — written sales planning tool")
+      ),
+      activeTab === "setup"
+        ? h("button", { className: "btn btn-reset", onClick: handleReset }, "↺ Reset all")
+        : null
+    ),
 
     h("div", { className: "tabs" },
       ...tabs.map(t => h("button", {
@@ -366,10 +491,15 @@ function App() {
       }, t.label))
     ),
 
+    /* ─── SETUP TAB ─── */
     activeTab === "setup" ? h(Fragment, null,
+
       h(Section, { title: "Annual goal" },
         h("div", { className: "grid-2" },
-          h("div", null, h(Label, null, "Annual revenue goal"), h(NumInput, { value: annualGoal, onChange: setAnnualGoal, prefix: "$", min: 0, step: 10000 })),
+          h("div", null,
+            h(Label, null, "Annual revenue goal"),
+            h(DollarInput, { value: annualGoal, onChange: setAnnualGoal })
+          ),
           h("div", null,
             h(Label, null, "Current month"),
             h("select", { className: "styled", value: currentMonth, onChange: e => setCurrentMonth(Number(e.target.value)) },
@@ -384,9 +514,11 @@ function App() {
         h("div", { className: "grid-2", style: { alignItems: "end" } },
           h("div", null,
             h(Label, { hint: "As a percentage of the annual revenue goal" }, "Service revenue %"),
-            h(NumInput, { value: servicePct, onChange: v => setServicePct(Math.min(100, Math.max(0, v))), prefix: "%", min: 0, max: 100 })
+            h(NumInput, { value: servicePct, onChange: v => setServicePct(Math.min(100, Math.max(0, v))), prefix: "%", min: 0, max: 100, clearOnZero: true })
           ),
-          h("div", { className: "info-box" }, "Service revenue: ", h("strong", null, fmt(annualGoal * servicePct / 100)))
+          h("div", { className: "info-box" },
+            "Service revenue: ", h("strong", null, fmtDisplay(annualGoal * servicePct / 100))
+          )
         )
       ),
 
@@ -395,28 +527,41 @@ function App() {
         h("div", { className: "grid-2" },
           h("div", null,
             h(Label, { hint: "Total contract value of WIP carried from prior year" }, "Carryover pipeline total"),
-            h(NumInput, { value: carryoverTotal, onChange: setCarryoverTotal, prefix: "$", min: 0, step: 5000 })
+            h(DollarInput, { value: carryoverTotal, onChange: setCarryoverTotal })
           ),
           h("div", null,
             h(Label, { hint: "Portion expected to be recognized as revenue this year" }, "% recognized this year"),
             h(NumInput, { value: carryoverRecPct, onChange: v => setCarryoverRecPct(Math.min(100, Math.max(0, v))), prefix: "%", min: 0, max: 100 })
           )
         ),
-        carryoverTotal > 0 ? h("div", { className: "info-box mt-8" }, "Carryover revenue applied this year: ", h("strong", null, fmt(carryoverTotal * carryoverRecPct / 100))) : null
+        carryoverTotal > 0
+          ? h("div", { className: "info-box mt-8" },
+              "Carryover revenue applied this year: ",
+              h("strong", null, fmtDisplay(carryoverTotal * carryoverRecPct / 100))
+            )
+          : null
       ),
 
       h(Section, { title: "Year-to-date actuals" },
         h("div", { className: "ytd-toggle-row" },
           h("input", { type: "checkbox", id: "ytd-chk", checked: includeYTD, onChange: e => setIncludeYTD(e.target.checked) }),
-          h("label", { htmlFor: "ytd-chk", style: { fontSize: 14, cursor: "pointer" } }, "Include YTD actuals in calculation")
+          h("label", { htmlFor: "ytd-chk", style: { fontSize: 14, cursor: "pointer", color: "var(--text-muted)" } }, "Include YTD actuals in calculation")
         ),
         includeYTD ? h("div", { className: "grid-2" },
-          h("div", null, h(Label, null, "YTD written sales contracted"), h(NumInput, { value: ytdWritten, onChange: setYtdWritten, prefix: "$", min: 0, step: 5000 })),
-          h("div", null, h(Label, null, "YTD revenue already recognized"), h(NumInput, { value: ytdRecognized, onChange: setYtdRecognized, prefix: "$", min: 0, step: 5000 }))
+          h("div", null,
+            h(Label, null, "YTD written sales contracted"),
+            h(DollarInput, { value: ytdWritten, onChange: setYtdWritten })
+          ),
+          h("div", null,
+            h(Label, null, "YTD revenue already recognized"),
+            h(DollarInput, { value: ytdRecognized, onChange: setYtdRecognized })
+          )
         ) : null
       )
+
     ) : null,
 
+    /* ─── PROJECTS TAB ─── */
     activeTab === "projects" ? h(Fragment, null,
       ...projectTypes.map((t, idx) => {
         const pctSum = t.prewirePct + t.roughPct + t.finalPct;
@@ -425,16 +570,26 @@ function App() {
           h("div", { className: "name-row" },
             h("input", {
               type: "text", className: "styled", value: t.name,
-              onChange: e => updateType(t.id, "name", e.target.value), placeholder: "Project type name"
+              onChange: e => updateType(t.id, "name", e.target.value),
+              placeholder: "Project type name"
             }),
             projectTypes.length > 1
               ? h("button", { className: "btn btn-remove", onClick: () => removeType(t.id) }, "Remove")
               : null
           ),
           h("div", { className: "grid-3 mb-12" },
-            h("div", null, h(Label, null, "Avg contract value"), h(NumInput, { value: t.avgValue, onChange: v => updateType(t.id, "avgValue", v), prefix: "$", min: 0, step: 1000 })),
-            h("div", null, h(Label, null, "Project duration (months)"), h(NumInput, { value: t.duration, onChange: v => updateType(t.id, "duration", v), min: 1, max: 36 })),
-            h("div", null, h(Label, null, "Sales mix %"), h(NumInput, { value: t.mixPct, onChange: v => updateType(t.id, "mixPct", v), prefix: "%", min: 0, max: 100 }))
+            h("div", null,
+              h(Label, null, "Avg contract value"),
+              h(DollarInput, { value: t.avgValue, onChange: v => updateType(t.id, "avgValue", v) })
+            ),
+            h("div", null,
+              h(Label, null, "Project duration (months)"),
+              h(NumInput, { value: t.duration, onChange: v => updateType(t.id, "duration", Math.max(0.1, v)), min: 0.1, max: 36, allowDecimal: true })
+            ),
+            h("div", null,
+              h(Label, null, "Sales mix %"),
+              h(NumInput, { value: t.mixPct, onChange: v => updateType(t.id, "mixPct", v), prefix: "%", min: 0, max: 100, clearOnZero: true })
+            )
           ),
           h("div", { className: "sub-panel" },
             h("div", { className: "sub-panel-title" }, "Phase schedule — month within project & revenue %"),
@@ -446,11 +601,17 @@ function App() {
               ].map(ph => h("div", { key: ph.key },
                 h("div", { style: { display: "flex", alignItems: "center", marginBottom: 6 } },
                   h("span", { className: "phase-dot", style: { background: ph.color } }),
-                  h("span", { style: { fontSize: 12, fontWeight: 600 } }, ph.label)
+                  h("span", { style: { fontSize: 12, fontWeight: 600, color: "var(--text-muted)" } }, ph.label)
                 ),
                 h("div", { style: { display: "flex", gap: 6 } },
-                  h("div", { style: { flex: 1 } }, h(Label, null, "Month"), h(NumInput, { value: t[ph.mf], onChange: v => updateType(t.id, ph.mf, Math.min(v, t.duration)), min: 1, max: t.duration })),
-                  h("div", { style: { flex: 1 } }, h(Label, null, "Rev %"), h(NumInput, { value: t[ph.pf], onChange: v => updateType(t.id, ph.pf, v), prefix: "%", min: 0, max: 100 }))
+                  h("div", { style: { flex: 1 } },
+                    h(Label, null, "Month"),
+                    h(NumInput, { value: t[ph.mf], onChange: v => updateType(t.id, ph.mf, Math.min(v, t.duration)), min: 1, max: Math.ceil(t.duration) })
+                  ),
+                  h("div", { style: { flex: 1 } },
+                    h(Label, null, "Rev %"),
+                    h(NumInput, { value: t[ph.pf], onChange: v => updateType(t.id, ph.pf, v), prefix: "%", min: 0, max: 100 })
+                  )
                 )
               ))
             ),
@@ -468,27 +629,29 @@ function App() {
       )
     ) : null,
 
+    /* ─── RESULTS TAB ─── */
     activeTab === "results" && calc ? h(Fragment, null,
+
       h(Section, { title: "Revenue goal breakdown" },
         h("div", { style: { maxWidth: 500 } },
-          h(DeductionRow, { label: "Annual revenue goal", value: fmt(annualGoal), bold: true }),
-          h(DeductionRow, { label: "Service revenue deducted (" + servicePct + "% of goal)", value: "− " + fmt(calc.serviceRevenue), color: "#8a8a87" }),
-          h(DeductionRow, { label: "Carryover pipeline recognized (" + carryoverRecPct + "% of " + fmt(carryoverTotal) + ")", value: "− " + fmt(calc.carryoverRevenue), color: "#8a8a87" }),
+          h(DeductionRow, { label: "Annual revenue goal", value: fmtResult(annualGoal), bold: true }),
+          h(DeductionRow, { label: "Service revenue deducted (" + servicePct + "% of goal)", value: "− " + fmtResult(calc.serviceRevenue), color: "var(--text-muted)" }),
+          h(DeductionRow, { label: "Carryover pipeline recognized (" + carryoverRecPct + "% of " + fmtResult(carryoverTotal) + ")", value: "− " + fmtResult(calc.carryoverRevenue), color: "var(--text-muted)" }),
           includeYTD && ytdRecognized > 0
-            ? h(DeductionRow, { label: "YTD revenue already recognized", value: "− " + fmt(calc.ytdRec), color: "#8a8a87" })
+            ? h(DeductionRow, { label: "YTD revenue already recognized", value: "− " + fmtResult(calc.ytdRec), color: "var(--text-muted)" })
             : null,
           h("div", { className: "deduction-row total-row" },
             h("span", { style: { fontWeight: 600 } }, "Revenue needed from new written sales"),
-            h("span", { style: { fontWeight: 700, color: "#378ADD", fontSize: 16 } }, fmt(calc.revenueNeededFromSales))
+            h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmtResult(calc.revenueNeededFromSales))
           )
         )
       ),
 
       h("div", { className: "metric-cards" },
-        h(MetricCard, { label: "Monthly written sales needed", value: fmt(calc.monthlyWrittenSalesNeeded), sub: calc.contractsPerMonth.toFixed(1) + " avg contracts/mo", accent: "#378ADD" }),
-        h(MetricCard, { label: "Monthly revenue from new sales", value: fmt(calc.monthlyRevNeeded), sub: "target from written sales only" }),
-        h(MetricCard, { label: "Service revenue (annual)", value: fmt(calc.serviceRevenue), sub: "excluded from sales target" }),
-        h(MetricCard, { label: "Carryover applied (annual)", value: fmt(calc.carryoverRevenue), sub: "from prior year pipeline" })
+        h(MetricCard, { label: "Monthly written sales needed", value: fmtResult(calc.monthlyWrittenSalesNeeded), sub: calc.contractsPerMonth.toFixed(1) + " avg contracts/mo", primary: true }),
+        h(MetricCard, { label: "Monthly revenue from new sales", value: fmtResult(calc.monthlyRevNeeded), sub: "target from written sales only" }),
+        h(MetricCard, { label: "Service revenue (annual)", value: fmtResult(calc.serviceRevenue), sub: "excluded from sales target" }),
+        h(MetricCard, { label: "Carryover applied (annual)", value: fmtResult(calc.carryoverRevenue), sub: "from prior year pipeline" })
       ),
 
       h(Section, { title: "Monthly revenue projection — 36-month horizon" },
@@ -499,6 +662,7 @@ function App() {
       h(Section, { title: "Revenue recognition by phase type" },
         h(PhaseBreakdown, { projectTypes, totalMix, monthlyWritten: calc.monthlyWrittenSalesNeeded })
       )
+
     ) : null,
 
     activeTab === "results" && !calc
