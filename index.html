@@ -100,6 +100,11 @@
   .btn-remove { font-size: 12px; color: var(--text-muted); padding: 4px 10px; }
   .btn-reset { font-size: 13px; color: var(--error); border-color: var(--error-border); padding: 6px 14px; white-space: nowrap; flex-shrink: 0; font-weight: 500; }
   .btn-reset:hover { background: var(--error-light); border-color: #e0a098; }
+  .btn-pdf { font-size: 13px; color: #fff; background: var(--accent); border-color: var(--accent); padding: 6px 16px; white-space: nowrap; flex-shrink: 0; font-weight: 500; }
+  .btn-pdf:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+  /* Hidden print pages — only visible during print */
+  .print-page { display: none; }
 
   .mix-status { font-size: 13px; margin-left: auto; }
   .mix-ok { color: var(--text-muted); }
@@ -135,6 +140,65 @@
     .metric-card { min-width: 120px; }
     .app-header { flex-direction: column; }
     .app-header-left { flex-wrap: wrap; }
+  }
+
+  /* ── Print / PDF styles ── */
+  @media print {
+    @page { margin: 18mm 14mm; size: A4 portrait; }
+
+    body { background: #fff !important; font-size: 12px; }
+    .app { max-width: 100%; padding: 0; }
+
+    /* Hide interactive chrome */
+    .tabs, .btn-reset, .btn-pdf, .btn, .add-remove-row,
+    .ytd-toggle-row input[type=checkbox],
+    .btn-remove { display: none !important; }
+
+    /* Show all print-pages regardless of active tab */
+    .print-page { display: block !important; }
+
+    /* Page breaks between sections */
+    .print-page-break { page-break-before: always; break-before: page; }
+
+    /* Sections */
+    .section { border: 1px solid #ccc; border-radius: 0; box-shadow: none; margin-bottom: 10px; padding: 10px; }
+    .section-title { font-size: 9px; }
+
+    /* Metric cards row */
+    .metric-cards { flex-wrap: wrap; gap: 8px; }
+    .metric-card { min-width: 120px; padding: 8px; }
+    .metric-card.primary { background: #eaeefc !important; color: #3a5abf !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .metric-card.primary .mc-label { color: #3a5abf !important; }
+    .metric-card.primary .mc-value { color: #3a5abf !important; }
+    .metric-card.primary .mc-sub { color: #6687e1 !important; }
+
+    /* Force colors to print */
+    .section-title, .input-prefix, .phase-dot,
+    .phase-table tr.total-row td,
+    .deduction-row span { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* Chart */
+    .chart-wrap { overflow: visible; }
+    .chart-wrap svg { width: 100% !important; min-width: 0 !important; }
+
+    /* Sub-panel */
+    .sub-panel { background: #f5f5f5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* Grids */
+    .grid-2 { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+    /* Input fields — show as plain text values */
+    .input-wrap { border: 1px solid #ccc; }
+    .input-wrap input { font-size: 12px; }
+
+    /* Header */
+    .app-logo { width: 32px; height: 32px; }
+    .app-title { font-size: 16px; }
+    .app-sub { font-size: 11px; }
+
+    /* Phase table */
+    .phase-table th, .phase-table td { font-size: 11px; padding: 5px 6px; }
   }
 </style>
 </head>
@@ -449,6 +513,10 @@ function App() {
     setProjectTypes(DEFAULT_TYPES.map(t => Object.assign({}, t)));
     setNextId(3);
     setActiveTab("setup");
+  }
+
+  function handleExport() {
+    window.print();
   }
 
   function addType() {
@@ -799,6 +867,10 @@ function App() {
 
       return h(Fragment, null,
 
+      h("div", { style: { display: "flex", justifyContent: "flex-end", marginBottom: "1rem" } },
+        h("button", { className: "btn btn-pdf", onClick: handleExport }, "\u2913 Export PDF")
+      ),
+
       h(Section, { title: "Revenue goal breakdown" },
         h("div", { style: { maxWidth: 500 } },
           h(DeductionRow, { label: "Annual revenue goal", value: fmtResult(annualGoal), bold: true }),
@@ -835,9 +907,141 @@ function App() {
         h(PhaseBreakdown, { projectTypes, totalMix, monthlyWritten: calc.monthlyWrittenSalesNeeded })
       )
 
-    ); // end Fragment
-    })() : null  // end results IIFE
-  );
+    })() : null,  // end results IIFE
+
+    /* ── Print-only pages (hidden on screen, visible when printing) ── */
+    h("div", { className: "print-page" },
+
+      /* PAGE 1 — Setup */
+      h("div", { style: { marginBottom: 24 } },
+        h("div", { style: { fontSize: 11, fontWeight: 600, color: "var(--accent)", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 12, borderBottom: "1.5px solid var(--border)", paddingBottom: 6 } }, "Setup"),
+
+        h(Section, { title: "Annual goal" },
+          h("div", { className: "grid-2" },
+            h("div", null, h(Label, null, "Annual revenue goal"), h(DollarInput, { value: annualGoal, onChange: setAnnualGoal })),
+            h("div", null,
+              h(Label, null, "Current month"),
+              h("select", { className: "styled", value: currentMonth, onChange: e => setCurrentMonth(Number(e.target.value)) },
+                ...MONTH_OPTIONS.map(o => h("option", { key: o.value, value: o.value }, o.label))
+              )
+            )
+          )
+        ),
+
+        h(Section, { title: "Service revenue" },
+          h("div", { className: "grid-2" },
+            h("div", null,
+              h(Label, { hint: "As a percentage of the annual revenue goal" }, "Service revenue %"),
+              h(NumInput, { value: servicePct, onChange: v => setServicePct(Math.min(100, Math.max(0, v))), prefix: "%", min: 0, max: 100, clearOnZero: true })
+            ),
+            h("div", { className: "info-box" }, "Service revenue: ", h("strong", null, fmtDisplay(annualGoal * servicePct / 100)))
+          )
+        ),
+
+        h(Section, { title: "Carryover pipeline" },
+          h("div", { className: "grid-2" },
+            h("div", null,
+              h(Label, { hint: "Total contract value of WIP carried from prior year" }, "Carryover pipeline total"),
+              h(DollarInput, { value: carryoverTotal, onChange: setCarryoverTotal })
+            ),
+            h("div", null,
+              h(Label, { hint: "Portion expected to be recognized as revenue this year" }, "% recognized this year"),
+              h(NumInput, { value: carryoverRecPct, onChange: v => setCarryoverRecPct(Math.min(100, Math.max(0, v))), prefix: "%", min: 0, max: 100 })
+            )
+          ),
+          carryoverTotal > 0
+            ? h("div", { className: "info-box mt-8" }, "Carryover revenue applied this year: ", h("strong", null, fmtDisplay(carryoverTotal * carryoverRecPct / 100)))
+            : null
+        ),
+
+        h(Section, { title: "Year-to-date actuals" },
+          h("div", { style: { fontSize: 13, color: "var(--text-muted)", marginBottom: 8 } },
+            "Include YTD actuals: " + (includeYTD ? "Yes" : "No")
+          ),
+          includeYTD ? h("div", { className: "grid-2" },
+            h("div", null, h(Label, null, "YTD written sales contracted"), h(DollarInput, { value: ytdWritten, onChange: setYtdWritten })),
+            h("div", null, h(Label, null, "YTD revenue already recognized"), h(DollarInput, { value: ytdRecognized, onChange: setYtdRecognized }))
+          ) : null
+        )
+      ),
+
+      /* PAGE 2 — Project types */
+      h("div", { className: "print-page-break", style: { marginBottom: 24 } },
+        h("div", { style: { fontSize: 11, fontWeight: 600, color: "var(--accent)", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 12, borderBottom: "1.5px solid var(--border)", paddingBottom: 6 } }, "Project types"),
+        ...projectTypes.map((t, idx) => {
+          const pctSum = t.prewirePct + t.roughPct + t.finalPct;
+          const pctOk = Math.abs(pctSum - 100) < 1;
+          return h(Section, { key: t.id, title: "Project type " + (idx + 1) + " — " + t.name },
+            h("div", { className: "grid-3 mb-12" },
+              h("div", null, h(Label, null, "Avg contract value"), h(DollarInput, { value: t.avgValue, onChange: v => updateType(t.id, "avgValue", v) })),
+              h("div", null, h(Label, null, "Duration (months)"), h(NumInput, { value: t.duration, onChange: v => updateType(t.id, "duration", v), min: 0.1, max: 36, allowDecimal: true })),
+              h("div", null, h(Label, null, "Sales mix %"), h(NumInput, { value: t.mixPct, onChange: v => updateType(t.id, "mixPct", v), prefix: "%", min: 0, max: 100 }))
+            ),
+            h("div", { className: "sub-panel" },
+              h("div", { className: "sub-panel-title" }, "Phase schedule"),
+              h("div", { className: "grid-3" },
+                ...[
+                  { label: "Prewire",  mf: "prewireMonth", pf: "prewirePct", color: COLORS.prewire },
+                  { label: "Rough-in", mf: "roughMonth",   pf: "roughPct",   color: COLORS.rough },
+                  { label: "Final",    mf: "finalMonth",   pf: "finalPct",   color: COLORS.final },
+                ].map(ph => h("div", { key: ph.label },
+                  h("div", { style: { display: "flex", alignItems: "center", marginBottom: 4 } },
+                    h("span", { className: "phase-dot", style: { background: ph.color } }),
+                    h("span", { style: { fontSize: 12, fontWeight: 600, color: "var(--text-muted)" } }, ph.label)
+                  ),
+                  h("div", { style: { fontSize: 13 } },
+                    "Month " + t[ph.mf] + " — " + t[ph.pf] + "%"
+                  )
+                ))
+              ),
+              !pctOk ? h("div", { className: "pct-err" }, "Phase percentages sum to " + pctSum + "% — must equal 100%") : null
+            )
+          );
+        })
+      ),
+
+      /* PAGE 3 — Results */
+      calc ? h("div", { className: "print-page-break" },
+        h("div", { style: { fontSize: 11, fontWeight: 600, color: "var(--accent)", letterSpacing: ".07em", textTransform: "uppercase", marginBottom: 12, borderBottom: "1.5px solid var(--border)", paddingBottom: 6 } }, "Results"),
+
+        h(Section, { title: "Revenue goal breakdown" },
+          h("div", { style: { maxWidth: 500 } },
+            h(DeductionRow, { label: "Annual revenue goal", value: fmtResult(annualGoal), bold: true }),
+            h(DeductionRow, { label: "Service revenue deducted (" + servicePct + "% of goal)", value: "− " + fmtResult(calc.serviceRevenue), color: "var(--text-muted)" }),
+            h(DeductionRow, { label: "Carryover pipeline recognized (" + carryoverRecPct + "% of " + fmtResult(carryoverTotal) + ")", value: "− " + fmtResult(calc.carryoverRevenue), color: "var(--text-muted)" }),
+            includeYTD && ytdRecognized > 0
+              ? h(DeductionRow, { label: "YTD revenue already recognized", value: "− " + fmtResult(calc.ytdRec), color: "var(--text-muted)" })
+              : null,
+            h("div", { className: "deduction-row total-row" },
+              h("span", { style: { fontWeight: 600 } }, "Revenue needed from new written sales"),
+              h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmtResult(calc.revenueNeededFromSales))
+            )
+          )
+        ),
+
+        h("div", { className: "metric-cards" },
+          h(MetricCard, { label: "Monthly written sales needed", value: fmtResult(calc.monthlyWrittenSalesNeeded), sub: calc.contractsPerMonth.toFixed(1) + " avg contracts/mo", primary: true }),
+          h(MetricCard, { label: "Annual written sales needed", value: fmtResult(calc.monthlyWrittenSalesNeeded * 12), sub: "12 \u00d7 monthly target" }),
+          h(MetricCard, { label: "In-year revenue yield", value: calc.inYearYieldPct.toFixed(1) + "%", sub: "of each written dollar recognized this year" }),
+          h(MetricCard, { label: "Projected in-year revenue", value: fmtResult(calc.projectedInYearRevenue), sub: "from new written sales Jan\u2013Dec" })
+        ),
+        h("div", { className: "metric-cards" },
+          h(MetricCard, { label: "Avg monthly revenue target", value: fmtResult(calc.monthlyRevNeeded), sub: "in-year revenue \u00f7 12" }),
+          h(MetricCard, { label: "Service revenue (annual)", value: fmtResult(calc.serviceRevenue), sub: "excluded from sales target" }),
+          h(MetricCard, { label: "Carryover applied (annual)", value: fmtResult(calc.carryoverRevenue), sub: "from prior year pipeline" })
+        ),
+
+        h(Section, { title: "Monthly revenue projection — 36-month horizon" },
+          h(MonthlyChart, { data: calc.revenueByMonthArr, currentMonth })
+        ),
+
+        h(Section, { title: "Revenue recognition by phase type" },
+          h(PhaseBreakdown, { projectTypes, totalMix, monthlyWritten: calc.monthlyWrittenSalesNeeded })
+        )
+      ) : null
+    )
+
+  ); // end App return
 }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
