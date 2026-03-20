@@ -148,6 +148,8 @@ const { useState, useMemo, useRef, createElement: h, Fragment } = React;
 
 const LOGO_B64 = "data:image/webp;base64,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";
 
+const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
 const COLORS = { prewire: "#6687e1", rough: "#1D9E75", final: "#c47a3a" };
 
 const DEFAULT_STATE = {
@@ -645,6 +647,11 @@ function App() {
       ...projectTypes.map((t, idx) => {
         const pctSum = t.prewirePct + t.roughPct + t.finalPct;
         const pctOk = Math.abs(pctSum - 100) < 1;
+        const phaseErrors = [
+          t.prewireMonth > t.duration && "Prewire (month " + t.prewireMonth + ") exceeds project duration (" + t.duration + " months)",
+          t.roughMonth   > t.duration && "Rough-in (month " + t.roughMonth   + ") exceeds project duration (" + t.duration + " months)",
+          t.finalMonth   > t.duration && "Final (month "    + t.finalMonth   + ") exceeds project duration (" + t.duration + " months)",
+        ].filter(Boolean);
         return h(Section, { key: t.id, title: "Project type " + (idx + 1) },
           h("div", { className: "name-row" },
             h("input", {
@@ -677,23 +684,40 @@ function App() {
                 { key: "pw", label: "Prewire",  mf: "prewireMonth", pf: "prewirePct", color: COLORS.prewire },
                 { key: "ro", label: "Rough-in", mf: "roughMonth",   pf: "roughPct",   color: COLORS.rough },
                 { key: "fi", label: "Final",    mf: "finalMonth",   pf: "finalPct",   color: COLORS.final },
-              ].map(ph => h("div", { key: ph.key },
-                h("div", { style: { display: "flex", alignItems: "center", marginBottom: 6 } },
-                  h("span", { className: "phase-dot", style: { background: ph.color } }),
-                  h("span", { style: { fontSize: 12, fontWeight: 600, color: "var(--text-muted)" } }, ph.label)
-                ),
-                h("div", { style: { display: "flex", gap: 6 } },
-                  h("div", { style: { flex: 1 } },
-                    h(Label, null, "Month"),
-                    h(NumInput, { value: t[ph.mf], onChange: v => updateType(t.id, ph.mf, Math.min(v, t.duration)), min: 1, max: Math.ceil(t.duration) })
+              ].map(ph => {
+                const monthOver = t[ph.mf] > t.duration;
+                return h("div", { key: ph.key },
+                  h("div", { style: { display: "flex", alignItems: "center", marginBottom: 6 } },
+                    h("span", { className: "phase-dot", style: { background: ph.color } }),
+                    h("span", { style: { fontSize: 12, fontWeight: 600, color: "var(--text-muted)" } }, ph.label)
                   ),
-                  h("div", { style: { flex: 1 } },
-                    h(Label, null, "Rev %"),
-                    h(NumInput, { value: t[ph.pf], onChange: v => updateType(t.id, ph.pf, v), prefix: "%", min: 0, max: 100 })
+                  h("div", { style: { display: "flex", gap: 6 } },
+                    h("div", { style: { flex: 1 } },
+                      h(Label, null, "Month"),
+                      h("div", { className: "input-wrap", style: monthOver ? { borderColor: "var(--error)" } : {} },
+                        h("input", {
+                          type: "number", value: t[ph.mf], min: 1, step: 1,
+                          style: { border: "none", background: "transparent", padding: "7px 10px", width: "100%", fontSize: 14, color: monthOver ? "var(--error)" : "var(--text-primary)", outline: "none", fontFamily: "inherit" },
+                          onFocus: e => setTimeout(() => e.target.select(), 0),
+                          onChange: e => { const n = parseInt(e.target.value, 10); if (!isNaN(n) && n >= 1) updateType(t.id, ph.mf, n); },
+                        })
+                      )
+                    ),
+                    h("div", { style: { flex: 1 } },
+                      h(Label, null, "Rev %"),
+                      h(NumInput, { value: t[ph.pf], onChange: v => updateType(t.id, ph.pf, v), prefix: "%", min: 0, max: 100 })
+                    )
+                  )
+                );
+              })
+            ),
+            phaseErrors.length > 0
+              ? h("div", { style: { marginTop: 10 } },
+                  ...phaseErrors.map((msg, i) =>
+                    h("div", { key: i, className: "pct-err" }, "\u26a0\ufe0f " + msg)
                   )
                 )
-              ))
-            ),
+              : null,
             !pctOk ? h("div", { className: "pct-err" }, "Phase percentages sum to " + pctSum + "% — must equal 100%") : null
           )
         );
@@ -709,7 +733,40 @@ function App() {
     ) : null,
 
     /* ─── RESULTS TAB ─── */
-    activeTab === "results" && calc ? h(Fragment, null,
+    activeTab === "results" ? (() => {
+      // Collect all phase-month violations across all project types
+      const allPhaseErrors = projectTypes.flatMap(t => [
+        t.prewireMonth > t.duration && { type: t.name, msg: "Prewire month " + t.prewireMonth + " exceeds duration of " + t.duration + " months" },
+        t.roughMonth   > t.duration && { type: t.name, msg: "Rough-in month " + t.roughMonth   + " exceeds duration of " + t.duration + " months" },
+        t.finalMonth   > t.duration && { type: t.name, msg: "Final month "    + t.finalMonth   + " exceeds duration of " + t.duration + " months" },
+      ].filter(Boolean));
+
+      if (allPhaseErrors.length > 0) {
+        return h("div", { className: "section", style: { borderColor: "var(--error-border)", background: "var(--error-light)" } },
+          h("div", { style: { display: "flex", alignItems: "flex-start", gap: 10 } },
+            h("span", { style: { fontSize: 18, lineHeight: 1, marginTop: 1 } }, "\u26a0\ufe0f"),
+            h("div", null,
+              h("div", { style: { fontWeight: 600, fontSize: 14, color: "var(--error)", marginBottom: 8 } },
+                "Results blocked — phase month errors must be fixed first"
+              ),
+              h("div", { style: { fontSize: 13, color: "var(--error)", marginBottom: 10 } },
+                "One or more phase months exceed the project duration. Go to the Project types tab to correct them."
+              ),
+              ...allPhaseErrors.map((e, i) =>
+                h("div", { key: i, style: { fontSize: 13, color: "var(--error)", padding: "4px 0", borderTop: i === 0 ? "1px solid var(--error-border)" : "none" } },
+                  h("strong", null, e.type + ": "), e.msg
+                )
+              )
+            )
+          )
+        );
+      }
+
+      if (!calc) {
+        return h("div", { className: "notice" }, "Add at least one project type to see results.");
+      }
+
+      return h(Fragment, null,
 
       h(Section, { title: "Revenue goal breakdown" },
         h("div", { style: { maxWidth: 500 } },
@@ -747,11 +804,8 @@ function App() {
         h(PhaseBreakdown, { projectTypes, totalMix, monthlyWritten: calc.monthlyWrittenSalesNeeded })
       )
 
-    ) : null,
-
-    activeTab === "results" && !calc
-      ? h("div", { className: "notice" }, "Add at least one project type to see results.")
-      : null
+    ); // end Fragment
+    })() : null  // end results IIFE
   );
 }
 
