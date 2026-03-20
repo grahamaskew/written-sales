@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Revenue Recognition Calculator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; background: #f5f5f3; color: #1a1a18; min-height: 100vh; }
+  .app { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  .app-title { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .app-sub { font-size: 14px; color: #6b6b68; margin-bottom: 1.5rem; }
+
+  /* tabs */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid #ddd; margin-bottom: 1.25rem; }
+  .tab-btn { background: none; border: none; padding: 8px 18px; font-size: 14px; cursor: pointer; color: #6b6b68; border-bottom: 2px solid transparent; margin-bottom: -1px; font-family: inherit; transition: color .15s; }
+  .tab-btn.active { color: #1a1a18; font-weight: 600; border-bottom-color: #1a1a18; }
+  .tab-btn:hover { color: #1a1a18; }
+
+  /* section card */
+  .section { background: #fff; border: 1px solid #e5e5e2; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .section-title { font-size: 11px; font-weight: 600; color: #8a8a87; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 1rem; }
+
+  /* grid helpers */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+  .flex-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 1rem; }
+
+  /* label */
+  .lbl { font-size: 12px; color: #6b6b68; margin-bottom: 4px; }
+  .lbl-hint { font-size: 11px; color: #aaa; margin-top: 1px; }
+
+  /* inputs */
+  .input-wrap { display: flex; align-items: center; border: 1px solid #d0d0ce; border-radius: 8px; overflow: hidden; background: #fff; }
+  .input-prefix { padding: 0 9px; font-size: 13px; color: #8a8a87; background: #f5f5f3; border-right: 1px solid #e0e0de; white-space: nowrap; height: 100%; display: flex; align-items: center; }
+  .input-wrap input[type=number] { border: none; background: transparent; padding: 7px 10px; width: 100%; font-size: 14px; color: #1a1a18; outline: none; font-family: inherit; }
+  .input-wrap input[type=number]::-webkit-inner-spin-button, .input-wrap input[type=number]::-webkit-outer-spin-button { opacity: .5; }
+  select.styled { width: 100%; padding: 7px 10px; font-size: 14px; border: 1px solid #d0d0ce; border-radius: 8px; background: #fff; color: #1a1a18; font-family: inherit; outline: none; cursor: pointer; }
+  input[type=text].styled { border: none; border-bottom: 1px solid #d0d0ce; background: transparent; font-size: 15px; font-weight: 600; color: #1a1a18; padding: 3px 0; outline: none; width: 100%; font-family: inherit; }
+  input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: #378ADD; }
+
+  /* metric cards */
+  .metric-cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .metric-card { background: #f0f0ed; border-radius: 8px; padding: 1rem; flex: 1; min-width: 140px; }
+  .metric-card .mc-label { font-size: 12px; color: #6b6b68; margin-bottom: 4px; }
+  .metric-card .mc-value { font-size: 22px; font-weight: 600; }
+  .metric-card .mc-sub { font-size: 12px; color: #6b6b68; margin-top: 2px; }
+
+  /* deduction table */
+  .deduction-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px; }
+  .deduction-row.total-row { border-bottom: none; padding-top: 10px; font-size: 14px; }
+
+  /* info box */
+  .info-box { background: #f0f0ed; border-radius: 8px; padding: 8px 12px; font-size: 13px; margin-top: 10px; color: #6b6b68; }
+  .info-box strong { color: #1a1a18; }
+
+  /* sub-panel */
+  .sub-panel { background: #f5f5f3; border-radius: 8px; padding: 12px; margin-top: 4px; }
+  .sub-panel-title { font-size: 12px; font-weight: 600; color: #6b6b68; margin-bottom: 10px; }
+
+  /* phase dot */
+  .phase-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 5px; }
+
+  /* button */
+  .btn { border: 1px solid #d0d0ce; background: transparent; border-radius: 8px; padding: 7px 16px; font-size: 14px; cursor: pointer; color: #1a1a18; font-family: inherit; transition: background .12s; }
+  .btn:hover { background: #f0f0ed; }
+  .btn-remove { font-size: 12px; color: #8a8a87; padding: 4px 10px; }
+  .mix-status { font-size: 13px; margin-left: auto; }
+  .mix-ok { color: #6b6b68; }
+  .mix-err { color: #D85A30; }
+  .pct-err { font-size: 12px; color: #D85A30; margin-top: 8px; }
+
+  /* chart */
+  .chart-wrap { overflow-x: auto; }
+  .chart-legend { display: flex; gap: 16px; font-size: 12px; color: #6b6b68; margin-top: 6px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-swatch { width: 10px; height: 10px; border-radius: 2px; }
+  .legend-line { width: 16px; height: 1px; }
+
+  /* table */
+  .phase-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+  .phase-table th { padding: 6px 8px; font-weight: 600; font-size: 12px; border-bottom: 1px solid #d0d0ce; }
+  .phase-table td { padding: 8px 8px; border-bottom: 1px solid #eee; }
+  .phase-table tr.total-row td { border-top: 1px solid #d0d0ce; border-bottom: none; background: #f5f5f3; font-weight: 600; }
+  .text-right { text-align: right; }
+  .text-muted { color: #6b6b68; }
+  .text-accent { color: #378ADD; }
+
+  .notice { padding: 2rem; text-align: center; color: #6b6b68; font-size: 14px; }
+  .helper-text { font-size: 13px; color: #6b6b68; margin-bottom: .75rem; }
+  .mt-8 { margin-top: 8px; }
+  .mb-12 { margin-bottom: 12px; }
+  .name-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; }
+  .add-remove-row { display: flex; align-items: center; margin-bottom: 1rem; }
+  .ytd-toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+
+  @media (max-width: 600px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .metric-card { min-width: 120px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script>
+const { useState, useMemo, createElement: h, Fragment } = React;
+
+const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const COLORS = { prewire: "#378ADD", rough: "#1D9E75", final: "#D85A30" };
+
+const DEFAULT_TYPES = [
+  { id: 1, name: "Standard Residential", avgValue: 45000, duration: 6, prewireMonth: 1, roughMonth: 3, finalMonth: 6, prewirePct: 20, roughPct: 40, finalPct: 40, mixPct: 50 },
+  { id: 2, name: "Large Custom Home",    avgValue: 120000, duration: 10, prewireMonth: 2, roughMonth: 5, finalMonth: 10, prewirePct: 25, roughPct: 35, finalPct: 40, mixPct: 30 },
+];
+
+function fmt(n) { return "$" + Math.round(n).toLocaleString(); }
+function pct(n) { return Math.round(n) + "%"; }
+
+function NumInput({ value, onChange, prefix, min, max, step }) {
+  return h("div", { className: "input-wrap" },
+    prefix ? h("span", { className: "input-prefix" }, prefix) : null,
+    h("input", {
+      type: "number", value, min, max, step: step || 1,
+      onChange: e => onChange(Number(e.target.value))
+    })
+  );
+}
+
+function Label({ children, hint }) {
+  return h("div", { className: "lbl" },
+    children,
+    hint ? h("div", { className: "lbl-hint" }, hint) : null
+  );
+}
+
+function Section({ title, children }) {
+  return h("div", { className: "section" },
+    h("div", { className: "section-title" }, title),
+    children
+  );
+}
+
+function MetricCard({ label, value, sub, accent }) {
+  return h("div", { className: "metric-card" },
+    h("div", { className: "mc-label" }, label),
+    h("div", { className: "mc-value", style: { color: accent || "#1a1a18" } }, value),
+    sub ? h("div", { className: "mc-sub" }, sub) : null
+  );
+}
+
+function DeductionRow({ label, value, color, bold }) {
+  return h("div", { className: "deduction-row" },
+    h("span", { style: { color: bold ? "#1a1a18" : "#6b6b68", fontWeight: bold ? 600 : 400 } }, label),
+    h("span", { style: { color: color || "#1a1a18", fontWeight: bold ? 600 : 400 } }, value)
+  );
+}
+
+function MonthlyChart({ data, currentMonth, monthlyTarget }) {
+  const [hovered, setHovered] = useState(null);
+  const maxRev = Math.max(...data.map(d => d.revenue), 1);
+  const chartH = 200;
+  const totalW = data.length * 10;
+  const barW = 8.5;
+  const goalY = chartH - (monthlyTarget / maxRev) * chartH;
+
+  return h("div", null,
+    h("div", { className: "chart-wrap" },
+      h("svg", {
+        viewBox: "0 0 " + Math.max(totalW, 100) + " " + (chartH + 30),
+        style: { width: "100%", minWidth: 600, display: "block" }
+      },
+        goalY > 0 && goalY < chartH
+          ? h("line", { x1: 0, y1: goalY, x2: totalW, y2: goalY, stroke: "#D85A30", strokeWidth: 0.5, strokeDasharray: "3,2" })
+          : null,
+        goalY > 0 && goalY < chartH
+          ? h("text", { x: 2, y: goalY - 2, fontSize: 4, fill: "#D85A30" }, "Monthly target")
+          : null,
+        ...data.map((d, i) => {
+          const barH = Math.max(1, (d.revenue / maxRev) * chartH);
+          const x = i * 10;
+          const y = chartH - barH;
+          const isPast = d.month < currentMonth;
+          const isCurrentYear = d.month <= 12;
+          const fill = isPast ? "#B4B2A9" : isCurrentYear ? "#378ADD" : "#B5D4F4";
+          const label = d.month <= 12
+            ? MONTH_NAMES[(d.month - 1) % 12]
+            : "Y" + Math.ceil(d.month / 12) + " M" + (((d.month - 1) % 12) + 1);
+          return h("g", {
+            key: i,
+            onMouseEnter: () => setHovered(i),
+            onMouseLeave: () => setHovered(null)
+          },
+            h("rect", { x: x + 0.5, y, width: barW, height: barH, fill, rx: 1 }),
+            i % 3 === 0 ? h("text", { x: x + barW / 2, y: chartH + 12, textAnchor: "middle", fontSize: 4, fill: "#888780" }, label) : null,
+            hovered === i ? h("g", null,
+              h("rect", { x: Math.min(x, totalW - 60), y: Math.max(0, y - 22), width: 55, height: 16, fill: "#fff", stroke: "#ccc", strokeWidth: 0.5, rx: 2 }),
+              h("text", { x: Math.min(x, totalW - 60) + 27, y: Math.max(0, y - 22) + 10, textAnchor: "middle", fontSize: 4.5, fill: "#1a1a18", fontWeight: 500 }, fmt(d.revenue))
+            ) : null
+          );
+        })
+      )
+    ),
+    h("div", { className: "chart-legend" },
+      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#B4B2A9" } }), "Past months"),
+      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#378ADD" } }), "Current year"),
+      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#B5D4F4" } }), "Future years"),
+      h("span", { className: "legend-item" }, h("span", { className: "legend-line", style: { background: "#D85A30" } }), "Monthly target")
+    )
+  );
+}
+
+function PhaseBreakdown({ projectTypes, totalMix, monthlyWritten }) {
+  const rows = projectTypes.map(t => {
+    const mix = totalMix > 0 ? t.mixPct / totalMix : 1 / projectTypes.length;
+    const m = monthlyWritten * mix;
+    const pw = m * (t.prewirePct / 100);
+    const ro = m * (t.roughPct / 100);
+    const fi = m * (t.finalPct / 100);
+    return { name: t.name, mix, pw, ro, fi, tot: pw + ro + fi };
+  });
+
+  return h("div", { style: { overflowX: "auto" } },
+    h("table", { className: "phase-table" },
+      h("thead", null,
+        h("tr", null,
+          h("th", { style: { textAlign: "left", width: "28%" } }, "Project type"),
+          h("th", { className: "text-right text-muted" }, "Mix"),
+          h("th", { className: "text-right", style: { color: COLORS.prewire } }, "Prewire rev/mo"),
+          h("th", { className: "text-right", style: { color: COLORS.rough } }, "Rough-in rev/mo"),
+          h("th", { className: "text-right", style: { color: COLORS.final } }, "Final rev/mo"),
+          h("th", { className: "text-right text-muted" }, "Total rev/mo")
+        )
+      ),
+      h("tbody", null,
+        ...rows.map((r, i) =>
+          h("tr", { key: i },
+            h("td", { style: { fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, r.name),
+            h("td", { className: "text-right text-muted" }, pct(r.mix * 100)),
+            h("td", { className: "text-right" }, fmt(r.pw)),
+            h("td", { className: "text-right" }, fmt(r.ro)),
+            h("td", { className: "text-right" }, fmt(r.fi)),
+            h("td", { className: "text-right", style: { fontWeight: 600 } }, fmt(r.tot))
+          )
+        ),
+        h("tr", { className: "total-row" },
+          h("td", null, "Total"),
+          h("td", { className: "text-right" }, "100%"),
+          h("td", { className: "text-right" }, fmt(rows.reduce((s, r) => s + r.pw, 0))),
+          h("td", { className: "text-right" }, fmt(rows.reduce((s, r) => s + r.ro, 0))),
+          h("td", { className: "text-right" }, fmt(rows.reduce((s, r) => s + r.fi, 0))),
+          h("td", { className: "text-right" }, fmt(rows.reduce((s, r) => s + r.tot, 0)))
+        )
+      )
+    )
+  );
+}
+
+function App() {
+  const [annualGoal, setAnnualGoal] = useState(3000000);
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  const [includeYTD, setIncludeYTD] = useState(true);
+  const [ytdWritten, setYtdWritten] = useState(0);
+  const [ytdRecognized, setYtdRecognized] = useState(0);
+  const [carryoverTotal, setCarryoverTotal] = useState(0);
+  const [carryoverRecPct, setCarryoverRecPct] = useState(50);
+  const [servicePct, setServicePct] = useState(0);
+  const [projectTypes, setProjectTypes] = useState(DEFAULT_TYPES);
+  const [nextId, setNextId] = useState(3);
+  const [activeTab, setActiveTab] = useState("setup");
+
+  function addType() {
+    if (projectTypes.length >= 5) return;
+    setProjectTypes(prev => [...prev, {
+      id: nextId, name: "Project type " + nextId, avgValue: 50000, duration: 8,
+      prewireMonth: 1, roughMonth: 4, finalMonth: 8,
+      prewirePct: 25, roughPct: 35, finalPct: 40, mixPct: 0,
+    }]);
+    setNextId(n => n + 1);
+  }
+  function removeType(id) { setProjectTypes(prev => prev.filter(t => t.id !== id)); }
+  function updateType(id, field, val) { setProjectTypes(prev => prev.map(t => t.id === id ? Object.assign({}, t, { [field]: val }) : t)); }
+
+  const totalMix = projectTypes.reduce((s, t) => s + t.mixPct, 0);
+
+  const calc = useMemo(() => {
+    if (!projectTypes.length) return null;
+    const norm = projectTypes.map(t => Object.assign({}, t, {
+      normMix: totalMix > 0 ? t.mixPct / totalMix : 1 / projectTypes.length
+    }));
+    const weightedAvgValue = norm.reduce((s, t) => s + t.avgValue * t.normMix, 0);
+    const serviceRevenue   = annualGoal * (servicePct / 100);
+    const carryoverRevenue = carryoverTotal * (carryoverRecPct / 100);
+    const ytdRec           = includeYTD ? ytdRecognized : 0;
+    const revenueNeededFromSales = Math.max(0, annualGoal - serviceRevenue - carryoverRevenue - ytdRec);
+    const monthlyRevNeeded = revenueNeededFromSales / 12;
+
+    function revPct(offset, t) {
+      let r = 0;
+      if (offset === t.prewireMonth) r += t.prewirePct / 100;
+      if (offset === t.roughMonth)   r += t.roughPct / 100;
+      if (offset === t.finalMonth)   r += t.finalPct / 100;
+      return r;
+    }
+    function buildSched(wm, t, cv) {
+      const out = {};
+      for (let o = 1; o <= t.duration; o++) {
+        const rev = revPct(o, t) * cv;
+        if (rev > 0) { const m = wm + o - 1; out[m] = (out[m] || 0) + rev; }
+      }
+      return out;
+    }
+
+    const avgRevPerContract = norm.reduce((s, t) =>
+      s + t.normMix * t.avgValue * ((t.prewirePct + t.roughPct + t.finalPct) / 100), 0);
+    const monthlyWrittenSalesNeeded = avgRevPerContract > 0
+      ? monthlyRevNeeded / (avgRevPerContract / weightedAvgValue)
+      : monthlyRevNeeded;
+
+    const revByMonth = {};
+    for (let i = 1; i <= 36; i++) revByMonth[i] = 0;
+
+    for (let wm = 1; wm <= 36; wm++) {
+      norm.forEach(t => {
+        const contracts = (monthlyWrittenSalesNeeded * t.normMix) / t.avgValue;
+        const sched = buildSched(wm, t, t.avgValue * contracts);
+        Object.keys(sched).forEach(m => { if (revByMonth[m] !== undefined) revByMonth[m] += sched[m]; });
+      });
+    }
+    if (includeYTD && ytdWritten > 0 && currentMonth > 1) {
+      for (let wm = 1; wm < currentMonth; wm++) {
+        norm.forEach(t => {
+          const cv = (ytdWritten / (currentMonth - 1)) * t.normMix;
+          const sched = buildSched(wm, t, cv);
+          Object.keys(sched).forEach(m => { if (revByMonth[m] !== undefined) revByMonth[m] += sched[m]; });
+        });
+      }
+    }
+
+    return {
+      monthlyWrittenSalesNeeded,
+      contractsPerMonth: monthlyWrittenSalesNeeded / weightedAvgValue,
+      revenueNeededFromSales,
+      monthlyRevNeeded,
+      serviceRevenue,
+      carryoverRevenue,
+      ytdRec,
+      revenueByMonthArr: Object.keys(revByMonth).map(m => ({ month: Number(m), revenue: revByMonth[m] }))
+    };
+  }, [annualGoal, currentMonth, ytdWritten, ytdRecognized, includeYTD, carryoverTotal, carryoverRecPct, servicePct, projectTypes, totalMix]);
+
+  const tabs = [{ id: "setup", label: "Setup" }, { id: "projects", label: "Project types" }, { id: "results", label: "Results" }];
+
+  return h("div", { className: "app" },
+    h("div", { className: "app-title" }, "Revenue Recognition Calculator"),
+    h("div", { className: "app-sub" }, "Custom integration services — written sales planning tool"),
+
+    h("div", { className: "tabs" },
+      ...tabs.map(t => h("button", {
+        key: t.id,
+        className: "tab-btn" + (activeTab === t.id ? " active" : ""),
+        onClick: () => setActiveTab(t.id)
+      }, t.label))
+    ),
+
+    activeTab === "setup" ? h(Fragment, null,
+      h(Section, { title: "Annual goal" },
+        h("div", { className: "grid-2" },
+          h("div", null, h(Label, null, "Annual revenue goal"), h(NumInput, { value: annualGoal, onChange: setAnnualGoal, prefix: "$", min: 0, step: 10000 })),
+          h("div", null,
+            h(Label, null, "Current month"),
+            h("select", { className: "styled", value: currentMonth, onChange: e => setCurrentMonth(Number(e.target.value)) },
+              ...MONTH_NAMES.map((m, i) => h("option", { key: i, value: i + 1 }, m))
+            )
+          )
+        )
+      ),
+
+      h(Section, { title: "Service revenue" },
+        h("p", { className: "helper-text" }, "Service revenue is recognized independently of written sales and is deducted from the sales-driven target."),
+        h("div", { className: "grid-2", style: { alignItems: "end" } },
+          h("div", null,
+            h(Label, { hint: "As a percentage of the annual revenue goal" }, "Service revenue %"),
+            h(NumInput, { value: servicePct, onChange: v => setServicePct(Math.min(100, Math.max(0, v))), prefix: "%", min: 0, max: 100 })
+          ),
+          h("div", { className: "info-box" }, "Service revenue: ", h("strong", null, fmt(annualGoal * servicePct / 100)))
+        )
+      ),
+
+      h(Section, { title: "Carryover pipeline" },
+        h("p", { className: "helper-text" }, "Work-in-progress contracts carried into this year from the prior year."),
+        h("div", { className: "grid-2" },
+          h("div", null,
+            h(Label, { hint: "Total contract value of WIP carried from prior year" }, "Carryover pipeline total"),
+            h(NumInput, { value: carryoverTotal, onChange: setCarryoverTotal, prefix: "$", min: 0, step: 5000 })
+          ),
+          h("div", null,
+            h(Label, { hint: "Portion expected to be recognized as revenue this year" }, "% recognized this year"),
+            h(NumInput, { value: carryoverRecPct, onChange: v => setCarryoverRecPct(Math.min(100, Math.max(0, v))), prefix: "%", min: 0, max: 100 })
+          )
+        ),
+        carryoverTotal > 0 ? h("div", { className: "info-box mt-8" }, "Carryover revenue applied this year: ", h("strong", null, fmt(carryoverTotal * carryoverRecPct / 100))) : null
+      ),
+
+      h(Section, { title: "Year-to-date actuals" },
+        h("div", { className: "ytd-toggle-row" },
+          h("input", { type: "checkbox", id: "ytd-chk", checked: includeYTD, onChange: e => setIncludeYTD(e.target.checked) }),
+          h("label", { htmlFor: "ytd-chk", style: { fontSize: 14, cursor: "pointer" } }, "Include YTD actuals in calculation")
+        ),
+        includeYTD ? h("div", { className: "grid-2" },
+          h("div", null, h(Label, null, "YTD written sales contracted"), h(NumInput, { value: ytdWritten, onChange: setYtdWritten, prefix: "$", min: 0, step: 5000 })),
+          h("div", null, h(Label, null, "YTD revenue already recognized"), h(NumInput, { value: ytdRecognized, onChange: setYtdRecognized, prefix: "$", min: 0, step: 5000 }))
+        ) : null
+      )
+    ) : null,
+
+    activeTab === "projects" ? h(Fragment, null,
+      ...projectTypes.map((t, idx) => {
+        const pctSum = t.prewirePct + t.roughPct + t.finalPct;
+        const pctOk = Math.abs(pctSum - 100) < 1;
+        return h(Section, { key: t.id, title: "Project type " + (idx + 1) },
+          h("div", { className: "name-row" },
+            h("input", {
+              type: "text", className: "styled", value: t.name,
+              onChange: e => updateType(t.id, "name", e.target.value), placeholder: "Project type name"
+            }),
+            projectTypes.length > 1
+              ? h("button", { className: "btn btn-remove", onClick: () => removeType(t.id) }, "Remove")
+              : null
+          ),
+          h("div", { className: "grid-3 mb-12" },
+            h("div", null, h(Label, null, "Avg contract value"), h(NumInput, { value: t.avgValue, onChange: v => updateType(t.id, "avgValue", v), prefix: "$", min: 0, step: 1000 })),
+            h("div", null, h(Label, null, "Project duration (months)"), h(NumInput, { value: t.duration, onChange: v => updateType(t.id, "duration", v), min: 1, max: 36 })),
+            h("div", null, h(Label, null, "Sales mix %"), h(NumInput, { value: t.mixPct, onChange: v => updateType(t.id, "mixPct", v), prefix: "%", min: 0, max: 100 }))
+          ),
+          h("div", { className: "sub-panel" },
+            h("div", { className: "sub-panel-title" }, "Phase schedule — month within project & revenue %"),
+            h("div", { className: "grid-3" },
+              ...[
+                { key: "pw", label: "Prewire",  mf: "prewireMonth", pf: "prewirePct", color: COLORS.prewire },
+                { key: "ro", label: "Rough-in", mf: "roughMonth",   pf: "roughPct",   color: COLORS.rough },
+                { key: "fi", label: "Final",    mf: "finalMonth",   pf: "finalPct",   color: COLORS.final },
+              ].map(ph => h("div", { key: ph.key },
+                h("div", { style: { display: "flex", alignItems: "center", marginBottom: 6 } },
+                  h("span", { className: "phase-dot", style: { background: ph.color } }),
+                  h("span", { style: { fontSize: 12, fontWeight: 600 } }, ph.label)
+                ),
+                h("div", { style: { display: "flex", gap: 6 } },
+                  h("div", { style: { flex: 1 } }, h(Label, null, "Month"), h(NumInput, { value: t[ph.mf], onChange: v => updateType(t.id, ph.mf, Math.min(v, t.duration)), min: 1, max: t.duration })),
+                  h("div", { style: { flex: 1 } }, h(Label, null, "Rev %"), h(NumInput, { value: t[ph.pf], onChange: v => updateType(t.id, ph.pf, v), prefix: "%", min: 0, max: 100 }))
+                )
+              ))
+            ),
+            !pctOk ? h("div", { className: "pct-err" }, "Phase percentages sum to " + pctSum + "% — must equal 100%") : null
+          )
+        );
+      }),
+      h("div", { className: "add-remove-row" },
+        projectTypes.length < 5
+          ? h("button", { className: "btn", onClick: addType }, "+ Add project type")
+          : null,
+        h("div", { className: "mix-status " + (totalMix === 100 ? "mix-ok" : "mix-err") },
+          "Sales mix total: " + totalMix + "%" + (totalMix !== 100 ? " (must equal 100%)" : "")
+        )
+      )
+    ) : null,
+
+    activeTab === "results" && calc ? h(Fragment, null,
+      h(Section, { title: "Revenue goal breakdown" },
+        h("div", { style: { maxWidth: 500 } },
+          h(DeductionRow, { label: "Annual revenue goal", value: fmt(annualGoal), bold: true }),
+          h(DeductionRow, { label: "Service revenue deducted (" + servicePct + "% of goal)", value: "− " + fmt(calc.serviceRevenue), color: "#8a8a87" }),
+          h(DeductionRow, { label: "Carryover pipeline recognized (" + carryoverRecPct + "% of " + fmt(carryoverTotal) + ")", value: "− " + fmt(calc.carryoverRevenue), color: "#8a8a87" }),
+          includeYTD && ytdRecognized > 0
+            ? h(DeductionRow, { label: "YTD revenue already recognized", value: "− " + fmt(calc.ytdRec), color: "#8a8a87" })
+            : null,
+          h("div", { className: "deduction-row total-row" },
+            h("span", { style: { fontWeight: 600 } }, "Revenue needed from new written sales"),
+            h("span", { style: { fontWeight: 700, color: "#378ADD", fontSize: 16 } }, fmt(calc.revenueNeededFromSales))
+          )
+        )
+      ),
+
+      h("div", { className: "metric-cards" },
+        h(MetricCard, { label: "Monthly written sales needed", value: fmt(calc.monthlyWrittenSalesNeeded), sub: calc.contractsPerMonth.toFixed(1) + " avg contracts/mo", accent: "#378ADD" }),
+        h(MetricCard, { label: "Monthly revenue from new sales", value: fmt(calc.monthlyRevNeeded), sub: "target from written sales only" }),
+        h(MetricCard, { label: "Service revenue (annual)", value: fmt(calc.serviceRevenue), sub: "excluded from sales target" }),
+        h(MetricCard, { label: "Carryover applied (annual)", value: fmt(calc.carryoverRevenue), sub: "from prior year pipeline" })
+      ),
+
+      h(Section, { title: "Monthly revenue projection — 36-month horizon" },
+        h("p", { className: "helper-text" }, "Revenue from new written sales only, assuming consistent monthly volume. Hover bars for detail."),
+        h(MonthlyChart, { data: calc.revenueByMonthArr, currentMonth, monthlyTarget: calc.monthlyRevNeeded })
+      ),
+
+      h(Section, { title: "Revenue recognition by phase type" },
+        h(PhaseBreakdown, { projectTypes, totalMix, monthlyWritten: calc.monthlyWrittenSalesNeeded })
+      )
+    ) : null,
+
+    activeTab === "results" && !calc
+      ? h("div", { className: "notice" }, "Add at least one project type to see results.")
+      : null
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(h(App, null));
+</script>
+</body>
+</html>
