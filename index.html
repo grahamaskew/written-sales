@@ -150,6 +150,21 @@ const LOGO_B64 = "data:image/webp;base64,UklGRq4PAABXRUJQVlA4WAoAAAAIAAAAHwEAHwE
 
 const MONTH_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
+// Convert a 1-based absolute month index (1=Jan of base year, 13=Jan of year+1, etc.)
+// to a "Mon YYYY" label, anchored to the current real-world year.
+const BASE_YEAR = new Date().getFullYear();
+function monthLabel(absMonth) {
+  const idx  = (absMonth - 1) % 12;
+  const year = BASE_YEAR + Math.floor((absMonth - 1) / 12);
+  return MONTH_NAMES[idx] + " " + year;
+}
+
+// Pre-build the 36 dropdown options once
+const MONTH_OPTIONS = Array.from({ length: 36 }, (_, i) => ({
+  value: i + 1,
+  label: monthLabel(i + 1),
+}));
+
 const COLORS = { prewire: "#6687e1", rough: "#1D9E75", final: "#c47a3a" };
 
 const DEFAULT_STATE = {
@@ -302,11 +317,9 @@ function MonthlyChart({ data, currentMonth }) {
     const x = i * 10;
     const y = chartH - barH;
     const isPast = d.month < currentMonth;
-    const isCurrentYear = d.month <= 12;
+    const isCurrentYear = d.month >= currentMonth && d.month <= 12;
     const fill = isPast ? "#c4ccd8" : isCurrentYear ? "#6687e1" : "#a8b8ee";
-    const label = d.month <= 12
-      ? MONTH_NAMES[(d.month - 1) % 12]
-      : "Y" + Math.ceil(d.month / 12) + " M" + (((d.month - 1) % 12) + 1);
+    const label = monthLabel(d.month);
     return { d, i, barH, x, y, fill, label };
   });
 
@@ -324,24 +337,25 @@ function MonthlyChart({ data, currentMonth }) {
         ...bars.map(({ d, i, barH, x, y, fill, label }) =>
           h("g", { key: "bar-" + i, onMouseEnter: () => setHovered(i), onMouseLeave: () => setHovered(null) },
             h("rect", { x: x + 0.5, y, width: barW, height: barH, fill, rx: 1 }),
-            i % 3 === 0 ? h("text", { x: x + barW / 2, y: chartH + 12, textAnchor: "middle", fontSize: 4, fill: "#9aaabb" }, label) : null
+            i % 3 === 0 ? h("text", { x: x + barW / 2, y: chartH + 10, textAnchor: "middle", fontSize: 3.8, fill: "#9aaabb" }, label) : null
           )
         ),
         // Render hovered tooltip last so it paints on top of all bars
         hovered !== null ? (() => {
-          const { x, y, d } = bars[hovered];
+          const { x, y, d, label } = bars[hovered];
           const tx = tooltipX(x - 26);
           const ty = tooltipY(y);
           return h("g", { key: "tooltip", style: { pointerEvents: "none" } },
-            h("rect", { x: tx, y: ty, width: 68, height: 17, fill: "#fff", stroke: "#c8cfde", strokeWidth: 0.6, rx: 3 }),
-            h("text", { x: tx + 34, y: ty + 11, textAnchor: "middle", fontSize: 4.8, fill: "#1c2333", fontWeight: 600 }, fmtResult(d.revenue))
+            h("rect", { x: tx, y: ty, width: 68, height: 22, fill: "#fff", stroke: "#c8cfde", strokeWidth: 0.6, rx: 3 }),
+            h("text", { x: tx + 34, y: ty + 8, textAnchor: "middle", fontSize: 3.6, fill: "#6b7a90" }, label),
+            h("text", { x: tx + 34, y: ty + 17, textAnchor: "middle", fontSize: 4.8, fill: "#1c2333", fontWeight: 600 }, fmtResult(d.revenue))
           );
         })() : null
       )
     ),
     h("div", { className: "chart-legend" },
-      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#c4ccd8" } }), "Past months"),
-      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#6687e1" } }), "Current year"),
+      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#c4ccd8" } }), "Before current month"),
+      h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#6687e1" } }), "Current year remaining"),
       h("span", { className: "legend-item" }, h("span", { className: "legend-swatch", style: { background: "#a8b8ee" } }), "Future years")
     )
   );
@@ -601,7 +615,7 @@ function App() {
           h("div", null,
             h(Label, null, "Current month"),
             h("select", { className: "styled", value: currentMonth, onChange: e => setCurrentMonth(Number(e.target.value)) },
-              ...MONTH_NAMES.map((m, i) => h("option", { key: i, value: i + 1 }, m))
+              ...MONTH_OPTIONS.map(o => h("option", { key: o.value, value: o.value }, o.label))
             )
           )
         )
