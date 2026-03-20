@@ -413,55 +413,100 @@ function App() {
     const carryoverRevenue = carryoverTotal * (carryoverRecPct / 100);
     const ytdRec           = includeYTD ? ytdRecognized : 0;
     const revenueNeededFromSales = Math.max(0, annualGoal - serviceRevenue - carryoverRevenue - ytdRec);
-    const monthlyRevNeeded = revenueNeededFromSales / 12;
 
-    function revPct(offset, t) {
+    // Given a write month (1–12) and a project type, return the revenue that
+    // falls within calendar months 1–12 per $1 of contract value written.
+    function revPctAtOffset(offset, t) {
       let r = 0;
       if (Math.round(offset * 10) === Math.round(t.prewireMonth * 10)) r += t.prewirePct / 100;
       if (Math.round(offset * 10) === Math.round(t.roughMonth   * 10)) r += t.roughPct   / 100;
       if (Math.round(offset * 10) === Math.round(t.finalMonth   * 10)) r += t.finalPct   / 100;
       return r;
     }
+
+    // Build full revenue schedule for $cv written in calendar month wm.
+    // Returns { calendarMonth: revenueAmount } across the 36-month horizon.
     function buildSched(wm, t, cv) {
       const out = {};
       const steps = Math.round(t.duration * 10);
       for (let s = 1; s <= steps; s++) {
-        const offset = Math.round(s) / 10;
-        const rev = revPct(offset, t) * cv;
-        if (rev > 0) { const m = Math.ceil(wm + offset - 1); out[m] = (out[m] || 0) + rev; }
+        const offset = s / 10;
+        const rev = revPctAtOffset(offset, t) * cv;
+        if (rev > 0) {
+          const m = Math.ceil(wm + offset - 1);
+          out[m] = (out[m] || 0) + rev;
+        }
       }
       return out;
     }
 
-    const avgRevPerContract = norm.reduce((s, t) =>
-      s + t.normMix * t.avgValue * ((t.prewirePct + t.roughPct + t.finalPct) / 100), 0);
-    const monthlyWrittenSalesNeeded = avgRevPerContract > 0
-      ? monthlyRevNeeded / (avgRevPerContract / weightedAvgValue)
-      : monthlyRevNeeded;
+    // For $1 written uniformly every month Jan–Dec, calculate how much of that
+    // revenue lands IN the same calendar year (months 1–12).
+    // This is the true "in-year yield" of a full year of consistent writing.
+    // We sum across all 12 write months, weighted by project mix.
+    let inYearYieldPerDollarWritten = 0;
+    for (let wm = 1; wm <= 12; wm++) {
+      norm.forEach(t => {
+        const sched = buildSched(wm, t, t.normMix); // $1 * mix weight
+        Object.keys(sched).forEach(m => {
+          if (Number(m) >= 1 && Number(m) <= 12) {
+            inYearYieldPerDollarWritten += sched[m];
+          }
+        });
+      });
+    }
+    // inYearYieldPerDollarWritten now represents: for every $1 written per month
+    // across all 12 months, this many dollars recognize in-year.
+    // To recognize $revenueNeededFromSales in-year, we need:
+    // monthlyWritten * inYearYieldPerDollarWritten = revenueNeededFromSales
+    const monthlyWrittenSalesNeeded = inYearYieldPerDollarWritten > 0
+      ? revenueNeededFromSales / inYearYieldPerDollarWritten
+      : 0;
 
+    // Monthly revenue target is simply the in-year revenue divided by 12
+    // (used for the goal line on the chart — what each month needs to average)
+    const monthlyRevNeeded = revenueNeededFromSales / 12;
+
+    // Build the 36-month revenue projection using the solved monthly written figure
     const revByMonth = {};
     for (let i = 1; i <= 36; i++) revByMonth[i] = 0;
     for (let wm = 1; wm <= 36; wm++) {
       norm.forEach(t => {
         const contracts = (monthlyWrittenSalesNeeded * t.normMix) / t.avgValue;
         const sched = buildSched(wm, t, t.avgValue * contracts);
-        Object.keys(sched).forEach(m => { if (revByMonth[m] !== undefined) revByMonth[m] += sched[m]; });
+        Object.keys(sched).forEach(m => {
+          if (revByMonth[m] !== undefined) revByMonth[m] += sched[m];
+        });
       });
     }
+
+    // Layer in YTD written sales already contracted (spread evenly across past months)
     if (includeYTD && ytdWritten > 0 && currentMonth > 1) {
       for (let wm = 1; wm < currentMonth; wm++) {
         norm.forEach(t => {
           const cv = (ytdWritten / (currentMonth - 1)) * t.normMix;
           const sched = buildSched(wm, t, cv);
-          Object.keys(sched).forEach(m => { if (revByMonth[m] !== undefined) revByMonth[m] += sched[m]; });
+          Object.keys(sched).forEach(m => {
+            if (revByMonth[m] !== undefined) revByMonth[m] += sched[m];
+          });
         });
       }
     }
+
+    // In-year revenue total projected from the solved monthly written sales figure
+    const projectedInYearRevenue = Object.keys(revByMonth)
+      .filter(m => Number(m) >= 1 && Number(m) <= 12)
+      .reduce((s, m) => s + revByMonth[m], 0);
+
     return {
       monthlyWrittenSalesNeeded,
       contractsPerMonth: monthlyWrittenSalesNeeded / weightedAvgValue,
       revenueNeededFromSales,
       monthlyRevNeeded,
+      inYearYieldPct: inYearYieldPerDollarWritten > 0
+        ? (inYearYieldPerDollarWritten / 12) * 100
+        : 0,
+      projectedInYearRevenue,
       serviceRevenue,
       carryoverRevenue,
       ytdRec,
@@ -649,7 +694,12 @@ function App() {
 
       h("div", { className: "metric-cards" },
         h(MetricCard, { label: "Monthly written sales needed", value: fmtResult(calc.monthlyWrittenSalesNeeded), sub: calc.contractsPerMonth.toFixed(1) + " avg contracts/mo", primary: true }),
-        h(MetricCard, { label: "Monthly revenue from new sales", value: fmtResult(calc.monthlyRevNeeded), sub: "target from written sales only" }),
+        h(MetricCard, { label: "Annual written sales needed", value: fmtResult(calc.monthlyWrittenSalesNeeded * 12), sub: "12 \u00d7 monthly target" }),
+        h(MetricCard, { label: "In-year revenue yield", value: calc.inYearYieldPct.toFixed(1) + "%", sub: "of each written dollar recognized this year" }),
+        h(MetricCard, { label: "Projected in-year revenue", value: fmtResult(calc.projectedInYearRevenue), sub: "from new written sales Jan\u2013Dec" })
+      ),
+      h("div", { className: "metric-cards" },
+        h(MetricCard, { label: "Avg monthly revenue target", value: fmtResult(calc.monthlyRevNeeded), sub: "in-year revenue \u00f7 12" }),
         h(MetricCard, { label: "Service revenue (annual)", value: fmtResult(calc.serviceRevenue), sub: "excluded from sales target" }),
         h(MetricCard, { label: "Carryover applied (annual)", value: fmtResult(calc.carryoverRevenue), sub: "from prior year pipeline" })
       ),
