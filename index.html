@@ -156,8 +156,7 @@ const MONTH_OPTIONS = Array.from({ length: 36 }, function(_, i) { return { value
 const COLORS = { prewire: "#6687e1", rough: "#1D9E75", final: "#c47a3a" };
 
 const DEFAULT_TYPES = [
-  { id: 1, name: "Standard Residential", avgValue: 45000, duration: 6, prewireMonth: 1, roughMonth: 3, finalMonth: 6, prewirePct: 20, roughPct: 40, finalPct: 40, mixPct: 50 },
-  { id: 2, name: "Large Custom Home",    avgValue: 120000, duration: 10, prewireMonth: 2, roughMonth: 5, finalMonth: 10, prewirePct: 25, roughPct: 35, finalPct: 40, mixPct: 30 }
+  { id: 1, name: "", avgValue: 0, duration: 1, prewireMonth: 1, roughMonth: 1, finalMonth: 1, prewirePct: 0, roughPct: 0, finalPct: 0, mixPct: 0 }
 ];
 
 var TODAY_MONTH = new Date().getMonth() + 1;
@@ -426,6 +425,9 @@ function App() {
       });
     }
     var moWritten = inYearYield>0 ? needFromSales/inYearYield : 0;
+    var baseNeedFromSales = Math.max(0, annualGoal - svcRev - coRev);
+    var baseMoWritten = inYearYield>0 ? baseNeedFromSales/inYearYield : 0;
+    var baseContractsPer = wAvg>0 ? baseMoWritten/wAvg : 0;
     var revByMo={};
     for (var i=1;i<=36;i++) revByMo[i]=0;
     for (var wm2=1;wm2<=36;wm2++) {
@@ -455,7 +457,10 @@ function App() {
       svcRev: svcRev,
       coRev: coRev,
       ytdRec: ytdRec,
-      revArr: Object.keys(revByMo).map(function(m){return {month:Number(m),revenue:revByMo[m]};})
+      revArr: Object.keys(revByMo).map(function(m){return {month:Number(m),revenue:revByMo[m]};}),
+      baseMoWritten: baseMoWritten,
+      baseContractsPer: baseContractsPer,
+      baseNeedFromSales: baseNeedFromSales
     };
   }, [annualGoal, currentMonth, ytdWritten, ytdRecognized, includeYTD, carryoverTotal, carryoverRecPct, servicePct, projectTypes, totalMix]);
 
@@ -531,7 +536,7 @@ function App() {
         ].filter(Boolean);
         return h(Sec, { key: t.id, title: "Project type " + (idx+1) },
           h("div", { className: "name-row" },
-            h("input", { type: "text", className: "styled", value: t.name, placeholder: "Project type name", onChange: function(e){updateType(t.id,"name",e.target.value);} }),
+            h("input", { type: "text", className: "styled", value: t.name, placeholder: "Name / type", onChange: function(e){updateType(t.id,"name",e.target.value);} }),
             projectTypes.length > 1 ? h("button", { className: "btn btn-remove", onClick: function(){removeType(t.id);} }, "Remove") : null
           ),
           h("div", { className: "grid-3 mb-12" },
@@ -627,15 +632,10 @@ function App() {
         )
       ),
       h("div", { className: "metric-cards" },
-        h(MCard, { label: "Monthly written sales needed", value: fmt(calc.moWritten), sub: calc.contractsPer.toFixed(1)+" avg contracts/mo", primary: true }),
-        h(MCard, { label: "Annual written sales needed", value: fmt(calc.moWritten*12), sub: "12 x monthly target" }),
+        h(MCard, { label: "Monthly written sales needed", value: fmt(calc.baseMoWritten), sub: calc.baseContractsPer.toFixed(1)+" avg contracts/mo", primary: true }),
+        h(MCard, { label: "Annual written sales needed", value: fmt(calc.baseMoWritten*12), sub: "12 x monthly target" }),
         h(MCard, { label: "In-year revenue yield", value: calc.yieldPct.toFixed(1)+"%", sub: "of each written dollar recognized this year" }),
-        h(MCard, { label: "Projected in-year revenue", value: fmt(calc.projInYear), sub: "from new written sales Jan-Dec" })
-      ),
-      h("div", { className: "metric-cards" },
-        h(MCard, { label: "Avg monthly revenue target", value: fmt(calc.moRevNeeded), sub: "in-year revenue / 12" }),
-        h(MCard, { label: "Service revenue (annual)", value: fmt(calc.svcRev), sub: "excluded from sales target" }),
-        h(MCard, { label: "Carryover applied (annual)", value: fmt(calc.coRev), sub: "from prior year pipeline" })
+        h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales), sub: "from new written sales Jan-Dec" })
       ),
       h(Sec, { title: "Revenue recognition by phase type" },
         h(PhaseBreakdown, { projectTypes: projectTypes, totalMix: totalMix, monthlyWritten: calc.moWritten })
@@ -694,15 +694,10 @@ function App() {
           )
         ),
         h("div", { className: "metric-cards" },
-          h(MCard, { label: "Monthly written sales needed", value: fmt(calc.moWritten), sub: calc.contractsPer.toFixed(1)+" avg contracts/mo", primary: true }),
-          h(MCard, { label: "Annual written sales needed", value: fmt(calc.moWritten*12), sub: "12 x monthly target" }),
+          h(MCard, { label: "Monthly written sales needed", value: fmt(calc.baseMoWritten), sub: calc.baseContractsPer.toFixed(1)+" avg contracts/mo", primary: true }),
+          h(MCard, { label: "Annual written sales needed", value: fmt(calc.baseMoWritten*12), sub: "12 x monthly target" }),
           h(MCard, { label: "In-year revenue yield", value: calc.yieldPct.toFixed(1)+"%", sub: "of each written dollar recognized this year" }),
-          h(MCard, { label: "Projected in-year revenue", value: fmt(calc.projInYear), sub: "from new written sales Jan-Dec" })
-        ),
-        h("div", { className: "metric-cards" },
-          h(MCard, { label: "Avg monthly revenue target", value: fmt(calc.moRevNeeded), sub: "in-year revenue / 12" }),
-          h(MCard, { label: "Service revenue (annual)", value: fmt(calc.svcRev), sub: "excluded from sales target" }),
-          h(MCard, { label: "Carryover applied (annual)", value: fmt(calc.coRev), sub: "from prior year pipeline" })
+          h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales), sub: "from new written sales Jan-Dec" })
         ),
         h(Sec, { title: "Revenue recognition by phase type" },
           h(PhaseBreakdown, { projectTypes: projectTypes, totalMix: totalMix, monthlyWritten: calc.moWritten })
