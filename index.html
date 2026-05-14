@@ -379,7 +379,7 @@ function App() {
   function addType() {
     if (projectTypes.length >= 5) return;
     setProjectTypes(function(prev) {
-      return prev.concat([{ id: nextId, name: "Project type " + nextId, avgValue: 50000, duration: 8, prewireMonth: 1, roughMonth: 4, finalMonth: 8, prewirePct: 25, roughPct: 35, finalPct: 40, mixPct: 0 }]);
+      return prev.concat([{ id: nextId, name: "", avgValue: 0, duration: 1, prewireMonth: 1, roughMonth: 1, finalMonth: 1, prewirePct: 0, roughPct: 0, finalPct: 0, mixPct: 0 }]);
     });
     setNextId(function(n) { return n + 1; });
   }
@@ -428,6 +428,18 @@ function App() {
     var baseNeedFromSales = Math.max(0, annualGoal - svcRev - coRev);
     var baseMoWritten = inYearYield>0 ? baseNeedFromSales/inYearYield : 0;
     var baseContractsPer = wAvg>0 ? baseMoWritten/wAvg : 0;
+    var boyMonths = 12 - currentMonth;
+    var boyYieldTotal = 0;
+    for (var bm=currentMonth+1; bm<=12; bm++) {
+      norm.forEach(function(t) {
+        var sc=buildSched(bm,t,t.normMix);
+        Object.keys(sc).forEach(function(m){ if(Number(m)>=1&&Number(m)<=12) boyYieldTotal+=sc[m]; });
+      });
+    }
+    var boyRevInYear = moWritten * boyYieldTotal;
+    var totalProjectedWritten = ytdWritten + moWritten * boyMonths;
+    var totalProjectedInYear = ytdRec + boyRevInYear;
+    var revisedYieldPct = totalProjectedWritten>0 ? (totalProjectedInYear/totalProjectedWritten)*100 : 0;
     var revByMo={};
     for (var i=1;i<=36;i++) revByMo[i]=0;
     for (var wm2=1;wm2<=36;wm2++) {
@@ -460,7 +472,12 @@ function App() {
       revArr: Object.keys(revByMo).map(function(m){return {month:Number(m),revenue:revByMo[m]};}),
       baseMoWritten: baseMoWritten,
       baseContractsPer: baseContractsPer,
-      baseNeedFromSales: baseNeedFromSales
+      baseNeedFromSales: baseNeedFromSales,
+      boyMonths: boyMonths,
+      boyRevInYear: boyRevInYear,
+      totalProjectedWritten: totalProjectedWritten,
+      totalProjectedInYear: totalProjectedInYear,
+      revisedYieldPct: revisedYieldPct
     };
   }, [annualGoal, currentMonth, ytdWritten, ytdRecognized, includeYTD, carryoverTotal, carryoverRecPct, servicePct, projectTypes, totalMix]);
 
@@ -637,6 +654,12 @@ function App() {
         h(MCard, { label: "In-year revenue yield", value: calc.yieldPct.toFixed(1)+"%", sub: "of each written dollar recognized this year" }),
         h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales), sub: "from new written sales Jan-Dec" })
       ),
+      includeYTD ? h("div", { className: "metric-cards" },
+        h(MCard, { label: "Current monthly written sales needed", value: fmt(calc.moWritten), sub: "adjusted for YTD actuals", primary: true }),
+        h(MCard, { label: "Balance of year written sales needed", value: fmt(calc.moWritten * calc.boyMonths), sub: calc.boyMonths+" months remaining" }),
+        h(MCard, { label: "Revised in-year revenue yield", value: calc.revisedYieldPct.toFixed(1)+"%", sub: "blended yield: YTD + balance of year" }),
+        h(MCard, { label: "Projected in-year revenue", value: fmt(calc.totalProjectedInYear), sub: "YTD recognized + BOY projected" })
+      ) : null,
       h(Sec, { title: "Revenue recognition by phase type" },
         h(PhaseBreakdown, { projectTypes: projectTypes, totalMix: totalMix, monthlyWritten: calc.moWritten })
       )
@@ -699,6 +722,12 @@ function App() {
           h(MCard, { label: "In-year revenue yield", value: calc.yieldPct.toFixed(1)+"%", sub: "of each written dollar recognized this year" }),
           h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales), sub: "from new written sales Jan-Dec" })
         ),
+        includeYTD ? h("div", { className: "metric-cards" },
+          h(MCard, { label: "Current monthly written sales needed", value: fmt(calc.moWritten), sub: "adjusted for YTD actuals", primary: true }),
+          h(MCard, { label: "Balance of year written sales needed", value: fmt(calc.moWritten * calc.boyMonths), sub: calc.boyMonths+" months remaining" }),
+          h(MCard, { label: "Revised in-year revenue yield", value: calc.revisedYieldPct.toFixed(1)+"%", sub: "blended yield: YTD + balance of year" }),
+          h(MCard, { label: "Projected in-year revenue", value: fmt(calc.totalProjectedInYear), sub: "YTD recognized + BOY projected" })
+        ) : null,
         h(Sec, { title: "Revenue recognition by phase type" },
           h(PhaseBreakdown, { projectTypes: projectTypes, totalMix: totalMix, monthlyWritten: calc.moWritten })
         )
