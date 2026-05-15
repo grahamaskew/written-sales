@@ -450,21 +450,20 @@ function App() {
         Object.keys(sc).forEach(function(m){ if(Number(m)>=1&&Number(m)<=12) boyYieldTotal+=sc[m]; });
       });
     }
-    // Revenue from YTD written sales that will recognize in BOY period (months currentMonth+1 to 12)
-    var ytdCarryoverBOY = 0;
+    // Total in-year revenue (months 1-12) that YTD written sales will generate via phase schedules
+    var ytdTotalRevContribution = 0;
     if (includeYTD && ytdWritten>0 && currentMonth>0) {
       var moYTD = ytdWritten/currentMonth;
       for (var wm4=1;wm4<=currentMonth;wm4++) {
         norm.forEach(function(t) {
           var sc4=buildSched(wm4,t,moYTD*t.normMix);
-          Object.keys(sc4).forEach(function(m){ if(Number(m)>currentMonth&&Number(m)<=12) ytdCarryoverBOY+=sc4[m]; });
+          Object.keys(sc4).forEach(function(m){ if(Number(m)>=1&&Number(m)<=12) ytdTotalRevContribution+=sc4[m]; });
         });
       }
     }
-    // BOY written sales: compute Annual first, Monthly = Annual ÷ boyMonths
-    // needFromSales already credits actual ytdRevRecognized; ytdCarryoverBOY credits future
-    // revenue from ytdWritten that will land in BOY months — together they correctly reduce the target
-    var revenueNeededFromBOY = Math.max(0, needFromSales - ytdCarryoverBOY);
+    // BOY written sales driven purely by ytdWritten via phase schedules, not ytdRevRecognized
+    // ytdRevRecognized only affects the YTD waterfall display, not the written sales requirement
+    var revenueNeededFromBOY = Math.max(0, baseNeedFromSales - ytdTotalRevContribution);
     var boyAnnualWritten = boyYieldTotal>0 ? revenueNeededFromBOY*boyMonths/boyYieldTotal : 0;
     var boyMoWritten = boyMonths>0 ? boyAnnualWritten/boyMonths : 0;
     // YTD contribution estimates (for Row 2 when includeYTD is true)
@@ -724,13 +723,22 @@ function App() {
           h(DRow, { label: "Annual revenue goal", value: fmt(annualGoal), bold: true }),
           h(DRow, { label: "Service revenue deducted ("+servicePct+"% of goal)", value: "- "+fmt(calc.svcRev), color: "var(--text-muted)" }),
           h(DRow, { label: "Carryover pipeline recognized ("+carryoverRecPct+"% of "+fmt(carryoverTotal)+")", value: "- "+fmt(calc.coRev), color: "var(--text-muted)" }),
-          includeYTD && ytdRecognized > 0 ? h(DRow, { label: "YTD revenue already recognized", value: "- "+fmt(calc.ytdRec), color: "var(--text-muted)" }) : null,
           h("div", { className: "deduction-row total-row" },
             h("span", { style: { fontWeight: 600 } }, "Revenue needed from new written sales"),
-            h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmt(calc.needFromSales))
+            h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmt(calc.baseNeedFromSales))
           )
         )
       ),
+      includeYTD ? h(Sec, { title: "YTD revenue adjustment" },
+        h("div", { style: { maxWidth: 500 } },
+          h(DRow, { label: "Revenue needed from new written sales (baseline)", value: fmt(calc.baseNeedFromSales), bold: true }),
+          h(DRow, { label: "YTD revenue already recognized", value: "- "+fmt(ytdRecognized), color: "var(--text-muted)" }),
+          h("div", { className: "deduction-row total-row" },
+            h("span", { style: { fontWeight: 600 } }, "Balance of revenue required"),
+            h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmt(calc.needFromSales))
+          )
+        )
+      ) : null,
       h("div", { className: "metric-cards" },
         h(MCard, { label: "Monthly written sales needed", value: fmt(calc.baseMoWritten), sub: calc.baseContractsPer.toFixed(1)+" avg contracts/mo", primary: true }),
         h(MCard, { label: "Annual written sales needed", value: fmt(calc.baseAnnualWritten), sub: "12 x monthly target" }),
@@ -794,13 +802,22 @@ function App() {
             h(DRow, { label: "Annual revenue goal", value: fmt(annualGoal), bold: true }),
             h(DRow, { label: "Service revenue deducted ("+servicePct+"% of goal)", value: "- "+fmt(calc.svcRev), color: "var(--text-muted)" }),
             h(DRow, { label: "Carryover pipeline recognized ("+carryoverRecPct+"% of "+fmt(carryoverTotal)+")", value: "- "+fmt(calc.coRev), color: "var(--text-muted)" }),
-            includeYTD && ytdRecognized>0 ? h(DRow, { label: "YTD revenue already recognized", value: "- "+fmt(calc.ytdRec), color: "var(--text-muted)" }) : null,
             h("div", { className: "deduction-row total-row" },
               h("span", { style: { fontWeight: 600 } }, "Revenue needed from new written sales"),
-              h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmt(calc.needFromSales))
+              h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmt(calc.baseNeedFromSales))
             )
           )
         ),
+        includeYTD ? h(Sec, { title: "YTD revenue adjustment" },
+          h("div", { style: { maxWidth: 500 } },
+            h(DRow, { label: "Revenue needed from new written sales (baseline)", value: fmt(calc.baseNeedFromSales), bold: true }),
+            h(DRow, { label: "YTD revenue already recognized", value: "- "+fmt(ytdRecognized), color: "var(--text-muted)" }),
+            h("div", { className: "deduction-row total-row" },
+              h("span", { style: { fontWeight: 600 } }, "Balance of revenue required"),
+              h("span", { style: { fontWeight: 700, color: "var(--accent)", fontSize: 16 } }, fmt(calc.needFromSales))
+            )
+          )
+        ) : null,
         h("div", { className: "metric-cards" },
           h(MCard, { label: "Monthly written sales needed", value: fmt(calc.baseMoWritten), sub: calc.baseContractsPer.toFixed(1)+" avg contracts/mo", primary: true }),
           h(MCard, { label: "Annual written sales needed", value: fmt(calc.baseAnnualWritten), sub: "12 x monthly target" }),
