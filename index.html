@@ -428,7 +428,9 @@ function App() {
     }
     var moWritten = inYearYield>0 ? needFromSales/inYearYield : 0;
     var baseNeedFromSales = Math.max(0, annualGoal - svcRev - coRev);
-    var baseMoWritten = inYearYield>0 ? baseNeedFromSales/inYearYield : 0;
+    var yieldPct = inYearYield>0 ? (inYearYield/12)*100 : 0;
+    var baseAnnualWritten = yieldPct>0 ? baseNeedFromSales/(yieldPct/100) : 0;
+    var baseMoWritten = baseAnnualWritten/12;
     var baseContractsPer = wAvg>0 ? baseMoWritten/wAvg : 0;
     var boyMonths = 12 - currentMonth;
     var boyYieldTotal = 0;
@@ -469,7 +471,8 @@ function App() {
       contractsPer: moWritten/wAvg,
       needFromSales: needFromSales,
       moRevNeeded: moRevNeeded,
-      yieldPct: inYearYield>0 ? (inYearYield/12)*100 : 0,
+      yieldPct: yieldPct,
+      baseAnnualWritten: baseAnnualWritten,
       projInYear: projInYear,
       svcRev: svcRev,
       coRev: coRev,
@@ -655,15 +658,15 @@ function App() {
       ),
       h("div", { className: "metric-cards" },
         h(MCard, { label: "Monthly written sales needed", value: fmt(calc.baseMoWritten), sub: calc.baseContractsPer.toFixed(1)+" avg contracts/mo", primary: true }),
-        h(MCard, { label: "Annual written sales needed", value: fmt(calc.baseMoWritten*12), sub: "12 x monthly target" }),
+        h(MCard, { label: "Annual written sales needed", value: fmt(calc.baseAnnualWritten), sub: "12 x monthly target" }),
         h(MCard, { label: "In-year revenue yield", value: calc.yieldPct.toFixed(1)+"%", sub: "of each written dollar recognized this year" }),
-        h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales), sub: "from new written sales Jan-Dec", sub2: "Service revenue: "+fmt(calc.svcRev), sub3: "Pipeline: "+fmt(calc.coRev) })
+        h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales+calc.coRev+calc.svcRev), sub: "Revenue from new written sales: "+fmt(calc.baseNeedFromSales), sub2: "Pipeline: "+fmt(calc.coRev), sub3: "Service revenue: "+fmt(calc.svcRev) })
       ),
       includeYTD ? h("div", { className: "metric-cards" },
         h(MCard, { label: "Current monthly written sales needed", value: fmt(calc.revisedMoWritten), sub: "adjusted for YTD actuals", primary: true }),
         h(MCard, { label: "Balance of year written sales needed", value: fmt(calc.revisedBOYWritten), sub: calc.boyMonths+" months remaining" }),
         h(MCard, { label: "Revised in-year revenue yield", value: calc.revisedBlendedYieldPct !== null ? calc.revisedBlendedYieldPct.toFixed(1)+"%" : "—", sub: calc.revisedBlendedYieldPct !== null ? "blended yield: YTD + balance of year" : "available Nov – Dec only" }),
-        h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales), sub: "full-year revenue target", sub2: "Service revenue: "+fmt(calc.svcRev), sub3: "Pipeline: "+fmt(calc.coRev) })
+        h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales+calc.coRev+calc.svcRev), sub: "Revenue from new written sales: "+fmt(calc.baseNeedFromSales), sub2: "Pipeline: "+fmt(calc.coRev), sub3: "Service revenue: "+fmt(calc.svcRev) })
       ) : null,
       h(Sec, { title: "Revenue recognition by phase type" },
         h(PhaseBreakdown, { projectTypes: projectTypes, totalMix: totalMix, monthlyWritten: calc.revisedMoWritten })
@@ -723,15 +726,15 @@ function App() {
         ),
         h("div", { className: "metric-cards" },
           h(MCard, { label: "Monthly written sales needed", value: fmt(calc.baseMoWritten), sub: calc.baseContractsPer.toFixed(1)+" avg contracts/mo", primary: true }),
-          h(MCard, { label: "Annual written sales needed", value: fmt(calc.baseMoWritten*12), sub: "12 x monthly target" }),
+          h(MCard, { label: "Annual written sales needed", value: fmt(calc.baseAnnualWritten), sub: "12 x monthly target" }),
           h(MCard, { label: "In-year revenue yield", value: calc.yieldPct.toFixed(1)+"%", sub: "of each written dollar recognized this year" }),
-          h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales), sub: "from new written sales Jan-Dec", sub2: "Service revenue: "+fmt(calc.svcRev), sub3: "Pipeline: "+fmt(calc.coRev) })
+          h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales+calc.coRev+calc.svcRev), sub: "Revenue from new written sales: "+fmt(calc.baseNeedFromSales), sub2: "Pipeline: "+fmt(calc.coRev), sub3: "Service revenue: "+fmt(calc.svcRev) })
         ),
         includeYTD ? h("div", { className: "metric-cards" },
           h(MCard, { label: "Current monthly written sales needed", value: fmt(calc.revisedMoWritten), sub: "adjusted for YTD actuals", primary: true }),
           h(MCard, { label: "Balance of year written sales needed", value: fmt(calc.revisedBOYWritten), sub: calc.boyMonths+" months remaining" }),
           h(MCard, { label: "Revised in-year revenue yield", value: calc.revisedBlendedYieldPct !== null ? calc.revisedBlendedYieldPct.toFixed(1)+"%" : "—", sub: calc.revisedBlendedYieldPct !== null ? "blended yield: YTD + balance of year" : "available Nov – Dec only" }),
-          h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales), sub: "full-year revenue target", sub2: "Service revenue: "+fmt(calc.svcRev), sub3: "Pipeline: "+fmt(calc.coRev) })
+          h(MCard, { label: "Projected in-year revenue", value: fmt(calc.baseNeedFromSales+calc.coRev+calc.svcRev), sub: "Revenue from new written sales: "+fmt(calc.baseNeedFromSales), sub2: "Pipeline: "+fmt(calc.coRev), sub3: "Service revenue: "+fmt(calc.svcRev) })
         ) : null,
         h(Sec, { title: "Revenue recognition by phase type" },
           h(PhaseBreakdown, { projectTypes: projectTypes, totalMix: totalMix, monthlyWritten: calc.moWritten })
