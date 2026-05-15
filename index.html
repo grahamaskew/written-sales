@@ -440,8 +440,20 @@ function App() {
         Object.keys(sc).forEach(function(m){ if(Number(m)>=1&&Number(m)<=12) boyYieldTotal+=sc[m]; });
       });
     }
+    // Revenue from YTD written sales that will recognize in BOY period (months currentMonth+1 to 12)
+    var ytdCarryoverBOY = 0;
+    if (includeYTD && ytdWritten>0 && currentMonth>0) {
+      var moYTD = ytdWritten/currentMonth;
+      for (var wm4=1;wm4<=currentMonth;wm4++) {
+        norm.forEach(function(t) {
+          var sc4=buildSched(wm4,t,moYTD*t.normMix);
+          Object.keys(sc4).forEach(function(m){ if(Number(m)>currentMonth&&Number(m)<=12) ytdCarryoverBOY+=sc4[m]; });
+        });
+      }
+    }
     // BOY written sales: compute Annual first, Monthly = Annual ÷ boyMonths
-    var boyAnnualWritten = boyYieldTotal>0 ? needFromSales*boyMonths/boyYieldTotal : 0;
+    var revenueNeededFromBOY = Math.max(0, needFromSales - ytdCarryoverBOY);
+    var boyAnnualWritten = boyYieldTotal>0 ? revenueNeededFromBOY*boyMonths/boyYieldTotal : 0;
     var boyMoWritten = boyMonths>0 ? boyAnnualWritten/boyMonths : 0;
     // YTD contribution estimates (for Row 2 when includeYTD is true)
     var svcRevYTD = includeYTD ? (currentMonth/12)*svcRev : 0;
