@@ -269,7 +269,8 @@ function App() {
   var ytdWrittenS = useState(ini('ytdWritten',0)); var setYtdWritten = ytdWrittenS[1]; var ytdWritten = ytdWrittenS[0];
   var ytdRecognizedS = useState(ini('ytdRecognized',0)); var setYtdRecognized = ytdRecognizedS[1]; var ytdRecognized = ytdRecognizedS[0];
   var carryoverWIPS = useState(ini('carryoverWIP',0)); var setCarryoverWIP = carryoverWIPS[1]; var carryoverWIP = carryoverWIPS[0];
-  var carryoverStartPctS = useState(Math.min(100,Math.max(0,ini('carryoverStartPct',0)))); var setCarryoverStartPct = carryoverStartPctS[1]; var carryoverStartPct = carryoverStartPctS[0];
+  var carryoverInYearPctS = useState(Math.min(100,Math.max(0,ini('carryoverInYearPct',100)))); var setCarryoverInYearPct = carryoverInYearPctS[1]; var carryoverInYearPct = carryoverInYearPctS[0];
+  var carryoverStartPctS = useState(Math.min(100,Math.max(0,ini('carryoverStartPct',20)))); var setCarryoverStartPct = carryoverStartPctS[1]; var carryoverStartPct = carryoverStartPctS[0];
   var servicePctS = useState(Math.min(100,Math.max(0,ini('servicePct',0)))); var setServicePct = servicePctS[1]; var servicePct = servicePctS[0];
   var _rawTypes=ini('projectTypes',DEFAULT_TYPES.map(function(t){return Object.assign({},t);})); var projectTypesS = useState(Array.isArray(_rawTypes)?_rawTypes.map(normalizeType):DEFAULT_TYPES.map(function(t){return Object.assign({},t);})); var setProjectTypes = projectTypesS[1]; var projectTypes = projectTypesS[0];
   var nextIdS = useState(ini('nextId',3)); var setNextId = nextIdS[1]; var nextId = nextIdS[0];
@@ -280,8 +281,8 @@ function App() {
   var preYTDMonth = useRef(TODAY_MONTH);
 
   useEffect(function() {
-    try { localStorage.setItem('wsrc_v1', JSON.stringify({ annualGoal:annualGoal, currentMonth:currentMonth, includeYTD:includeYTD, ytdWritten:ytdWritten, ytdRecognized:ytdRecognized, carryoverWIP:carryoverWIP, carryoverStartPct:carryoverStartPct, servicePct:servicePct, projectTypes:projectTypes, nextId:nextId, monthlyBreakdown:monthlyBreakdown, ytdMonthlyWritten:ytdMonthlyWritten, ytdMonthlyRecognized:ytdMonthlyRecognized })); } catch(e) {}
-  }, [annualGoal, currentMonth, includeYTD, ytdWritten, ytdRecognized, carryoverWIP, carryoverStartPct, servicePct, projectTypes, nextId, monthlyBreakdown, ytdMonthlyWritten, ytdMonthlyRecognized]);
+    try { localStorage.setItem('wsrc_v1', JSON.stringify({ annualGoal:annualGoal, currentMonth:currentMonth, includeYTD:includeYTD, ytdWritten:ytdWritten, ytdRecognized:ytdRecognized, carryoverWIP:carryoverWIP, carryoverInYearPct:carryoverInYearPct, carryoverStartPct:carryoverStartPct, servicePct:servicePct, projectTypes:projectTypes, nextId:nextId, monthlyBreakdown:monthlyBreakdown, ytdMonthlyWritten:ytdMonthlyWritten, ytdMonthlyRecognized:ytdMonthlyRecognized })); } catch(e) {}
+  }, [annualGoal, currentMonth, includeYTD, ytdWritten, ytdRecognized, carryoverWIP, carryoverInYearPct, carryoverStartPct, servicePct, projectTypes, nextId, monthlyBreakdown, ytdMonthlyWritten, ytdMonthlyRecognized]);
 
   function handleYTDToggle(checked) {
     if (checked) {
@@ -298,7 +299,7 @@ function App() {
     setAnnualGoal(3000000); setCurrentMonth(TODAY_MONTH);
     preYTDMonth.current = TODAY_MONTH;
     setIncludeYTD(false); setYtdWritten(0); setYtdRecognized(0);
-    setCarryoverWIP(0); setCarryoverStartPct(0); setServicePct(0);
+    setCarryoverWIP(0); setCarryoverInYearPct(100); setCarryoverStartPct(20); setServicePct(0);
     setProjectTypes(DEFAULT_TYPES.map(function(t){return Object.assign({},t);}));
     setNextId(3); setActiveTab("setup");
     setMonthlyBreakdown(false); setYtdMonthlyWritten([]); setYtdMonthlyRecognized([]);
@@ -378,32 +379,35 @@ function App() {
     });
     var wAvg = norm.reduce(function(s,t){return s+t.avgValue*t.normMix;},0);
     var svcRev = annualGoal*(servicePct/100);
-    // Single-pass carryover fractions (all relative to original contract value basis):
-    //   remainingCarryFrac  — phases where calMonth >= 1 (not yet recognized at Jan 1)
-    //   inYearCarryFrac     — phases in months 1–12 (recognize this year)
-    //   futureCarryFrac     — phases in months > 12 (deferred to next year)
-    //   ytdCarryFrac        — phases in months 1–effMonth (recognized so far this year)
-    // coRev / coRevYTD / pipelineCarryover are derived as carryoverWIP × (fraction / remainingCarryFrac)
-    // so the WIP input is the remaining balance, not the original contract value.
-    var remainingCarryFrac = 0, inYearCarryFrac = 0, futureCarryFrac = 0, ytdCarryFrac = 0;
-    norm.forEach(function(t) {
-      var startOffset = -(t.duration * carryoverStartPct / 100);
-      [{months:t.prewireMonths,pct:t.prewirePct},{months:t.roughMonths,pct:t.roughPct},{months:t.finalMonths,pct:t.finalPct}].forEach(function(phase){
-        var n=phase.months.length;
-        phase.months.forEach(function(pm){
-          var calMonth = startOffset + pm;
-          var share = t.normMix * (phase.pct/100/n);
-          if (calMonth >= 1)                            remainingCarryFrac += share;
-          if (calMonth >= 1 && calMonth <= 12)          inYearCarryFrac   += share;
-          if (calMonth > 12)                            futureCarryFrac   += share;
-          if (includeYTD && calMonth >= 1 && calMonth <= effMonth) ytdCarryFrac += share;
+    // coRev and pipelineCarryover come directly from the user-entered carryoverInYearPct.
+    // pipelineCarryover is the exact complement — no rounding drift.
+    var coRev = carryoverWIP * (carryoverInYearPct / 100);
+    var pipelineCarryover = carryoverWIP - coRev;
+    // YTD carryover:
+    //   When inYearPct = 100%: phase-weighted using phase schedule + carryoverStartPct
+    //     (carryoverStartPct default 20% reflects that carryover projects are partially through)
+    //   When inYearPct < 100%: linear pro-rata (coRev × effMonth/12)
+    var inYearCarryFrac = 0, ytdCarryFrac = 0;
+    if (carryoverWIP > 0 && carryoverInYearPct >= 100) {
+      norm.forEach(function(t) {
+        var startOffset = -(t.duration * carryoverStartPct / 100);
+        [{months:t.prewireMonths,pct:t.prewirePct},{months:t.roughMonths,pct:t.roughPct},{months:t.finalMonths,pct:t.finalPct}].forEach(function(phase){
+          var n=phase.months.length;
+          phase.months.forEach(function(pm){
+            var calMonth = startOffset + pm;
+            var share = t.normMix * (phase.pct/100/n);
+            if (calMonth >= 1 && calMonth <= 12)         inYearCarryFrac += share;
+            if (calMonth >= 1 && calMonth <= effMonth)   ytdCarryFrac    += share;
+          });
         });
       });
-    });
-    var derivedInYearPct   = remainingCarryFrac > 0 ? inYearCarryFrac / remainingCarryFrac : 0;
-    var coRev         = carryoverWIP > 0 && remainingCarryFrac > 0 ? carryoverWIP * (inYearCarryFrac / remainingCarryFrac) : 0;
-    var coRevYTD      = carryoverWIP > 0 && remainingCarryFrac > 0 ? carryoverWIP * (ytdCarryFrac    / remainingCarryFrac) : 0;
-    var pipelineCarryover = carryoverWIP > 0 && remainingCarryFrac > 0 ? carryoverWIP * (futureCarryFrac / remainingCarryFrac) : 0;
+    }
+    var coRevYTD = 0;
+    if (includeYTD && carryoverWIP > 0 && effMonth > 0) {
+      coRevYTD = (carryoverInYearPct >= 100 && inYearCarryFrac > 0)
+        ? carryoverWIP * (ytdCarryFrac / inYearCarryFrac)
+        : coRev * (effMonth / 12);
+    }
 
     function buildSched(wm, t, cv) {
       var out={}, steps=Math.round(t.duration*10);
@@ -536,10 +540,9 @@ function App() {
       r1WrittenEOY: r1WrittenEOY,
       r1EOYPipeline: r1EOYPipeline,
       r2WrittenEOY: r2WrittenEOY,
-      r2EOYPipeline: r2EOYPipeline,
-      derivedInYearPct: derivedInYearPct
+      r2EOYPipeline: r2EOYPipeline
     };
-  }, [annualGoal, currentMonth, ytdWritten, ytdRecognized, includeYTD, carryoverWIP, carryoverStartPct, servicePct, projectTypes, totalMix, monthlyBreakdown, ytdMonthlyWritten]);
+  }, [annualGoal, currentMonth, ytdWritten, ytdRecognized, includeYTD, carryoverWIP, carryoverInYearPct, carryoverStartPct, servicePct, projectTypes, totalMix, monthlyBreakdown, ytdMonthlyWritten]);
 
   // YTD Card 4 display values — Option A: model-based sub-lines + variance
   // Each sub-line shows the phase-schedule-predicted contribution for that source.
@@ -609,23 +612,23 @@ function App() {
             h(DollarInput, { value: carryoverWIP, onChange: setCarryoverWIP })
           ),
           h("div", null,
-            h(Lbl, { hint: "Derived from your project type phase schedule and the average % complete at Jan 1. Shows what share of the WIP balance the model expects to complete and bill this year." }, "% of WIP recognized this year (model-derived)"),
-            h("div", { className: "input-wrap", style: { background: "var(--bg-subtle)", cursor: "default" } },
-              h("span", { className: "input-prefix" }, "%"),
-              h("span", { style: { padding: "7px 10px", fontSize: 14, color: "var(--text-muted)" } },
-                calc ? (calc.derivedInYearPct * 100).toFixed(1) : "—"
-              )
-            )
+            h(Lbl, { hint: "What % of the WIP balance will be completed and billed during this year? 100% = all WIP clears this year. Less than 100% = a portion carries into next year." }, "% of WIP recognized this year"),
+            h(NumInput, { value: carryoverInYearPct, onChange: function(v){setCarryoverInYearPct(Math.min(100,Math.max(0,v)));}, prefix: "%", min: 0, max: 100, clearOnZero: true })
           )
         ),
-        carryoverWIP > 0 ? h("div", { className: "grid-2 mt-8" },
-          h("div", null,
-            h(Lbl, { hint: "On average, how far through their project timeline are carryover WIP jobs at Jan 1? 0% = projects begin Jan 1 (all phases ahead). Higher % = projects already in progress, with earlier phases already billed." }, "Average % complete at Jan 1"),
-            h(NumInput, { value: carryoverStartPct, onChange: function(v){setCarryoverStartPct(Math.min(100,Math.max(0,v)));}, prefix: "%", min: 0, max: 100 })
-          ),
-          h("div", { className: "info-box", style: { alignSelf: "flex-end" } },
+        carryoverWIP > 0 ? h(Fragment, null,
+          carryoverInYearPct >= 100 ? h("div", { className: "grid-2 mt-8" },
+            h("div", null,
+              h(Lbl, { hint: "Used to weight the YTD carryover timing against your phase schedule. 20% default reflects that most carryover WIP is already partially through its project lifecycle at Jan 1." }, "Average % complete at Jan 1 (YTD timing)"),
+              h(NumInput, { value: carryoverStartPct, onChange: function(v){setCarryoverStartPct(Math.min(100,Math.max(0,v)));}, prefix: "%", min: 0, max: 100 })
+            ),
+            h("div", { className: "info-box", style: { alignSelf: "flex-end" } },
+              h("div", null, "Pipeline applied this year: ", h("strong", null, calc ? fmt(calc.coRev) : "—")),
+              calc && calc.pipelineCarryover > 0 ? h("div", { style: { marginTop: 4 } }, "Year-end WIP carried forward: ", h("strong", null, fmt(calc.pipelineCarryover))) : null
+            )
+          ) : h("div", { className: "info-box mt-8" },
             h("div", null, "Pipeline applied this year: ", h("strong", null, calc ? fmt(calc.coRev) : "—")),
-            calc && calc.pipelineCarryover > 0 ? h("div", { style: { marginTop: 4 } }, "Year-end WIP carried forward: ", h("strong", null, fmt(calc.pipelineCarryover))) : null
+            h("div", { style: { marginTop: 4 } }, "Year-end WIP carried forward: ", h("strong", null, calc ? fmt(calc.pipelineCarryover) : "—"))
           )
         ) : null
       ),
