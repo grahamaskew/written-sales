@@ -467,6 +467,25 @@ function App() {
         });
       }
     }
+    // Projected full-year written sales based on annualising the current YTD pace
+    // For past months: uses actual phase-schedule revenue (already in ytdTotalRevContribution)
+    // For future months (effMonth+1..12): applies the average YTD monthly rate
+    var projMoRate = 0, projWritten = 0, projInYearRev = 0, projDeferred = 0;
+    if (includeYTD && effMonth > 0 && ytdWritten > 0) {
+      projMoRate = ytdWritten / effMonth;
+      projWritten = projMoRate * 12;
+      var projFutureRevContribution = 0;
+      for (var wmP = effMonth + 1; wmP <= 12; wmP++) {
+        norm.forEach(function(t) {
+          var scP = buildSched(wmP, t, projMoRate * t.normMix);
+          Object.keys(scP).forEach(function(m) {
+            if (Number(m) >= 1 && Number(m) <= 12) projFutureRevContribution += scP[m];
+          });
+        });
+      }
+      projInYearRev = ytdTotalRevContribution + projFutureRevContribution;
+      projDeferred = Math.max(0, projWritten - projInYearRev);
+    }
     // YTD estimates computed here (before BOY) so they feed into actualSalesRecognizedYTD (fix 1 ordering)
     // coRevYTD already computed in the carryover loop above.
     var svcRevYTD = includeYTD ? (effMonth/12)*svcRev : 0;
@@ -540,7 +559,11 @@ function App() {
       r1WrittenEOY: r1WrittenEOY,
       r1EOYPipeline: r1EOYPipeline,
       r2WrittenEOY: r2WrittenEOY,
-      r2EOYPipeline: r2EOYPipeline
+      r2EOYPipeline: r2EOYPipeline,
+      projMoRate: projMoRate,
+      projWritten: projWritten,
+      projInYearRev: projInYearRev,
+      projDeferred: projDeferred
     };
   }, [annualGoal, currentMonth, ytdWritten, ytdRecognized, includeYTD, carryoverWIP, carryoverInYearPct, carryoverStartPct, servicePct, projectTypes, totalMix, monthlyBreakdown, ytdMonthlyWritten]);
 
@@ -894,7 +917,15 @@ function App() {
             sub3: "Service revenue (model): "+fmt(card4Svc),
             sub4: card4Variance !== null ? (card4Variance >= 0 ? "Ahead of model: +"+fmt(card4Variance) : "Behind model: −"+fmt(-card4Variance)) : null }),
           h(MCard, { label: "Projected deferred revenue", value: fmt(calc.r2EOYPipeline), sub: "From written sales: "+fmt(calc.r2WrittenEOY), sub2: "From prior-year carryover: "+fmt(calc.pipelineCarryover) })
-        )
+        ),
+        calc.projWritten > 0 ? h(Fragment, null,
+          h("div", { style: { fontSize: 11, fontWeight: 600, color: "var(--accent)", letterSpacing: ".08em", textTransform: "uppercase", margin: "1rem 0 0.5rem" } }, "Full-year projection at current pace"),
+          h("div", { className: "metric-cards" },
+            h(MCard, { label: "Projected total written sales", value: fmt(calc.projWritten), sub: "At current YTD pace: "+fmt(calc.projMoRate)+"/mo × 12", primary: true }),
+            h(MCard, { label: "Projected in-year revenue", value: fmt(calc.projInYearRev), sub: calc.yieldPct.toFixed(1)+"% in-year yield on projected writing" }),
+            h(MCard, { label: "Projected deferred revenue", value: fmt(calc.projDeferred), sub: "Recognized beyond "+BASE_YEAR })
+          )
+        ) : null
       ) : null
     );
   }
@@ -993,7 +1024,15 @@ function App() {
               sub3: "Service revenue (model): "+fmt(card4Svc),
               sub4: card4Variance !== null ? (card4Variance >= 0 ? "Ahead of model: +"+fmt(card4Variance) : "Behind model: −"+fmt(-card4Variance)) : null }),
             h(MCard, { label: "Projected deferred revenue", value: fmt(calc.r2EOYPipeline), sub: "From written sales: "+fmt(calc.r2WrittenEOY), sub2: "From prior-year carryover: "+fmt(calc.pipelineCarryover) })
-          )
+          ),
+          calc.projWritten > 0 ? h(Fragment, null,
+            h("div", { style: { fontSize: 11, fontWeight: 600, color: "var(--accent)", letterSpacing: ".08em", textTransform: "uppercase", margin: "1rem 0 0.5rem" } }, "Full-year projection at current pace"),
+            h("div", { className: "metric-cards" },
+              h(MCard, { label: "Projected total written sales", value: fmt(calc.projWritten), sub: "At current YTD pace: "+fmt(calc.projMoRate)+"/mo × 12", primary: true }),
+              h(MCard, { label: "Projected in-year revenue", value: fmt(calc.projInYearRev), sub: calc.yieldPct.toFixed(1)+"% in-year yield on projected writing" }),
+              h(MCard, { label: "Projected deferred revenue", value: fmt(calc.projDeferred), sub: "Recognized beyond "+BASE_YEAR })
+            )
+          ) : null
         ) : null
       ) : null
     );
